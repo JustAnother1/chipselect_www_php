@@ -1,0 +1,165 @@
+/* reset start*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+margin: 0;
+padding: 0;
+border: 0;
+outline: 0;
+font-size: 100%;
+vertical-align: baseline;
+background: transparent;
+}
+
+body {
+line-height: 1;
+}
+
+input, textarea  { margin: 0; padding: 0; }
+
+ol, ul {
+list-style: square outside;
+}
+
+blockquote, q {
+quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+content: '';
+content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+text-decoration: none;
+}
+
+del {
+text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+
+fieldset, img, abbr, acronym { border: 0; }
+
+address, caption, cite, code, dfn, th, var { font-style: normal; font-weight: normal; }
+
+caption, th, td { text-align: left; }
+
+h1, h2, h3, h4, h5, h6 { font-size: 1.5em; font-weight: bold; }
+
+select, option, input, textarea { font-size: inherit; font-family: inherit; }
+
+/* reset end */
+
+body {
+    font-size: 100%;
+    font-family: Helvetica,Arial,sans-serif;
+    margin: 0;
+    padding: 0;
+    min-width: 41em; /* Mindestbreite verhindert Umbruch */
+    background-color: #ffffff;
+    background-image: url(source_code.png);
+}
+
+div#header {
+    font-size: 1.5em;
+    margin: 0 0 0;
+    padding: 0.8em;
+    text-align: center;
+    background-color: #ffffff;
+}
+
+div#header h1 {
+    align: center;
+}
+
+div#menue {
+    align: center;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+    background-color: #0000ff;
+    overflow: auto;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+div#menue ul {
+    text-align: center;
+    font-size: 0.91em;
+    float: left;
+}
+
+div#menue li {
+    display: inline;
+    text-align: center;
+    float: left;
+}
+
+div#menue a {
+    padding: 0.25em;
+    text-decoration: none;
+    font-weight: bold;
+    float: left;
+}
+
+div#menue a:link {
+    color: #ffffff;
+    background-color: #0000ff;
+}
+
+div#menue a:visited {
+    color: #ffffff;
+    background-color: #0000ff;
+}
+
+div#menue a:hover {
+    color: #000000;
+    background-color: #ffffff;
+}
+
+div#menue a:active {
+    color: #000000;
+    background-color: #ffffff;
+}
+
+div#content {
+    padding: 1em;
+    background-color: #ffffff;
+    max-width: 50em;
+    align: center;
+}
+
+div#content h2 {
+    font-size: 1.2em;
+    margin: 0 0;
+}
+
+div#content p {
+    font-size: 1em;
+    margin: 0 0;
+}
+
+div#content li {
+    margin-left: 1em;
+}
+
