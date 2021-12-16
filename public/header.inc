@@ -1,5 +1,5 @@
 <div id="header">
-    <h1>Chipselect</h1>
+    <h1>ChipSelect</h1>
 </div>
 <div id="menue">
     <ul>

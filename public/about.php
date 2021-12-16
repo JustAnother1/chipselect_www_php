@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Chipselect - about</title>
+        <title>ChipSelect - about</title>
         <meta  http-equiv="content-type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
@@ -11,20 +11,20 @@
 include ("header.inc");
 ?>
 <br/>
-Chipselect wants to make embedded development easier.<br/>
+ChipSelect wants to make embedded development easier.<br/>
 We want to provide all information that can help with making the decision which chips to use. This includes how to
 program them, how to test software for them, how to switch between them and how to debug them.<br/>
 <br/>
 
 Existing data about microcontrollers
 <ul>
-<li>- is scattered over websites from different vendors</li>
+<li>- is scattered over web sites from different vendors</li>
 <li>- differs in form and quality from vendor to vendor</li>
 <li>- is hard to find</li>
 <li>- has errors</li>
 </ul>
 <br/>
-Chipselect collects all available data on programmable chips, such as microcontrollers and FPGAs.
+ChipSelect collects all available data on programmable chips, such as microcontrollers and FPGAs.
 This includes characteristics as well as peripheral information.<br/>
 <br/>
 ChipSelect wants to become the central database
@@ -59,6 +59,7 @@ This way the user will know to address chipselect if the information is not up t
 If you think that some of the informations presented on chipselct
 should not be publicly available because it is protected by intellectual property- or copy-rights, then please contact us so that we can correct the situation.
 <br/>
+ChipSelect is open source! <a href="https://github.com/JustAnother1/chipselect_www_php">source</a> <a href="https://github.com/JustAnother1/chipselect_doc">documentation</a>
 <br/>
 <?php
 include ("footer.inc");
