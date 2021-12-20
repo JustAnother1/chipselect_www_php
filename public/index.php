@@ -1,3 +1,6 @@
+<?php
+include("start.inc");
+?>
 <!DOCTYPE html>
 <html>
     <head>

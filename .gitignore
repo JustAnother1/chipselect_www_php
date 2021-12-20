@@ -1,5 +1,5 @@
 secret.inc
 Dockerfile
 nginx.conf
-
+public/privat_*
 
