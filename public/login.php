@@ -45,11 +45,11 @@ else
 {
     ?>
     <form method="POST">
-    <b>Login</b><br>
-    <br>
-    Username: <input name="login_name"><br>
-    Password: <input name="login_passwort" type=password><br>
-    <br>
+    <b>Login</b><br />
+    <br />
+    Username: <input name="login_name"><br />
+    Password: <input name="login_passwort" type=password><br />
+    <br />
     <input type=submit name=submit value="login">
     </form>
     <p>If you want to register an account send an email to <a href="mailto:kontakt@ing-poetter.de">kontakt@ing-poetter.de</a></p>

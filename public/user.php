@@ -14,9 +14,34 @@ include("start.inc");
 include ("header.inc");
 if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
 {
-    echo("<br/><h1>User account settings</h1>");
     include ("../secret.inc");
     $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+
+    if(isset($_POST['change_password']))
+    {
+        $stmt = $pdo->prepare('SELECT password FROM p_user WHERE name = ?');
+        if(true == $stmt->execute(array($_SESSION['login_name'])))
+        {
+            $row = $stmt->fetch();
+            if(false != $row)
+            {
+                // check password
+                if(true == password_verify($_POST['old_password'], $row["password"]))
+                {
+                    // old passwortd matches -> update password
+                    $pw = password_hash($_POST['new_password'],  PASSWORD_DEFAULT);
+                    $stmt = $pdo->prepare('UPDATE p_user SET password = ? WHERE name = ?');
+                    if(true == $stmt->execute(array($pw , $_SESSION['login_name'])))
+                    {
+                        echo("<br/><h1>Password has been changed!</h1>");
+                    }
+                }
+            }
+        }
+    }
+
+
+    echo("<br/><h1>User account settings</h1>");
 
     $stmt = $pdo->prepare('SELECT name, password, full_name, email, roles FROM p_user WHERE name = ?');
     if(true == $stmt->execute(array($_SESSION["login_name"])))
@@ -30,6 +55,14 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
             echo("<p>role : " . $row["roles"] . "</p>");
         }
     }
+
+    // change password
+    echo("<br/><h2>chnage password</h2>\n");
+    echo("<form method=\"POST\">\n");
+    echo("current password: <input name=\"old_password\" type=password><br />\n");
+    echo("new password: <input name=\"new_password\" type=password><br />");
+    echo("<input type=submit name=change_password value=\"change password\">");
+    echo("</form>");
 }
 echo("<br/>");
 include ("footer.inc");
