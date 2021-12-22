@@ -173,15 +173,32 @@ $stmt = $dbh->prepare($sql);
 $stmt->execute(array($peripheral_id));
 echo("<div id=\"registers\">\n");
 echo("<h2>Registers</h2>\n");
+echo("<div id=\"registers_idx\">\n");
+
 foreach ($stmt as $row) {
     if($row['display_name'] == "")
     {
-        echo("    <h3>" . $row['name'] . "</h3>\n");
+        echo("    <p><a href=\"#" . $row['name'] . "\">" . $row['name'] . "</a></p>\n");
     }
     else if($row['name'] != $row['display_name']) {
-        echo("    <h3>" . $row['display_name'] . " (" . $row['name'] . ")</h3>\n");
+        echo("    <p><a href=\"#" . $row['name'] . "\">" . $row['display_name'] . " (" . $row['name'] . ")</a></p>\n");
     } else {
-        echo("    <h3>" . $row['name'] . "</h3>\n");
+        echo("    <p><a href=\"#" . $row['name'] . "\">" . $row['name'] . "</a></p>\n");
+    }
+}
+echo("<br />\n");
+$stmt = $dbh->prepare($sql);
+$stmt->execute(array($peripheral_id));
+echo("</div>\n");
+foreach ($stmt as $row) {
+    if($row['display_name'] == "")
+    {
+        echo("    <h3 id=\"" . $row['name'] . "\">" . $row['name'] . "</h3>\n");
+    }
+    else if($row['name'] != $row['display_name']) {
+        echo("    <h3 id=\"" . $row['name'] . "\">" . $row['display_name'] . " (" . $row['name'] . ")</h3>\n");
+    } else {
+        echo("    <h3 id=\"" . $row['name'] . "\">" . $row['name'] . "</h3>\n");
     }
     echo("<p>\n");
     echo("    " . $row['description'] . "<br />\n");
@@ -204,6 +221,7 @@ foreach ($stmt as $row) {
     // echo("<img src=\"reg_" . $row['id'] . ".svg\" width=\"300\" height=\"100\" alt=\"Register with bits\" loading=\"lazy\" />\n");
     // register_image( $row['id']);
     print_fields($dbh, $row['display_name'],  $row['id'], $row['size'], $row['access'], $row['reset_value']);
+    echo("<br />\n");
 }
 echo("</div>\n");
 
