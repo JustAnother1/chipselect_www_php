@@ -18,7 +18,7 @@ $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_pa
 
 $sql = 'SELECT name, id FROM p_vendor WHERE alternative = 0 ORDER by name';
 foreach($pdo->query($sql) as $row) {
-    echo("<a href=\"vendor_id.php?id=" . $row['id'] . "\" >" . $row['name'] . "</a><br />\n");
+    echo("<a href=\"vendor_id.php?name=" . $row['name'] . "\" >" . $row['name'] . "</a><br />\n");
 }
 echo("<br />\n");
 include ("footer.inc");

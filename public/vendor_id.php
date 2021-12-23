@@ -10,20 +10,21 @@ include ("../secret.inc");
 // connect to database
 $dbh = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
-$vendor_id = $_GET['id'];
-// check if it is an int
-if(!is_numeric($vendor_id)) {
-    echo("    </head>\n");
-    echo("    <body>\n");
-    echo("     <h1> Invalid vendor id of " . $vendor_id . "</h1>\n");
-    echo("    </body>\n");
-    echo("</html>\n");
-    exit;
-}
+$vendor_name = $_GET['name'];
+// $vendor_id = $_GET['id'];
+// // check if it is an int
+// if(!is_numeric($vendor_id)) {
+//     echo("    </head>\n");
+//     echo("    <body>\n");
+//     echo("     <h1> Invalid vendor id of " . $vendor_id . "</h1>\n");
+//     echo("    </body>\n");
+//     echo("</html>\n");
+//     exit;
+// }
 
 // if we get more information regarding the Vendor into p_vendor then we could request that and show it as an introduction to the vendors devices
-$stmt = $dbh->prepare('SELECT name, url FROM p_vendor WHERE id = ?');
-if(false == $stmt->execute(array($vendor_id))) {
+$stmt = $dbh->prepare('SELECT id, name, url, alternative FROM p_vendor WHERE name = ?');
+if(false == $stmt->execute(array($vendor_name))) {
     echo("    </head>\n");
     echo("    <body>\n");
     echo("     <h1> Can not talk to database !</h1>\n");
@@ -35,13 +36,22 @@ $row = $stmt->fetch();
 if(false == $row) {
     echo("    </head>\n");
     echo("    <body>\n");
-    echo("     <h1> Invalid device id of " . $device_id . "</h1>\n");
+    echo("     <h1> Invalid vendor name of " . $vendor_name . "</h1>\n");
     echo("    </body>\n");
     echo("</html>\n");
     exit;
 }
 $vendor_name =  $row['name'];
 $vendor_url =  $row['url'];
+if(0 != $row['alternative'])
+{
+    $vendor_id = $row['alternative'];
+}
+else
+{
+    $vendor_id = $row['id'];
+}
+
 echo('<title>' . $vendor_name . '</title>');
         ?>
         <meta  http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -51,7 +61,7 @@ echo('<title>' . $vendor_name . '</title>');
 
 <?php
 include ("header.inc");
-echo('<p><a href="vendors.php">all vendors' . "</a></p>\n");
+echo('<p><a href="index.php">all vendors' . "</a></p>\n");
 echo("<h1>" . $vendor_name . "</h1>\n");
 echo('<p><a href="' . $vendor_url . '">' . $vendor_url . "</a></p>\n");
 // if we get more information regarding the Vendor into p_vendor then we could request that and show it as an introduction to the vendors devices
