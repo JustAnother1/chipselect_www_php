@@ -12,15 +12,15 @@ include("start.inc");
     <body>
 <?php
 include ("header.inc");
-echo("<br/><h1>Vendors:</h1>");
+echo("<br />\n<h1>Vendors:</h1>\n");
 include ("../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 $sql = 'SELECT name, id FROM p_vendor WHERE alternative = 0 ORDER by name';
 foreach($pdo->query($sql) as $row) {
-    echo('<a href="vendor_id.php?id=' . $row['id'] . '" >' . $row['name'] . '</a></br>');
+    echo("<a href=\"vendor_id.php?id=" . $row['id'] . "\" >" . $row['name'] . "</a><br />\n");
 }
-echo("<br/>");
+echo("<br />\n");
 include ("footer.inc");
         ?>
     </body>
