@@ -90,10 +90,12 @@ foreach ($stmt as $row) {
     // echo("<!-- " . json_encode($row) . " -->\n");
     if ( 0 == $row['svd_id']) {
     // Name
-    echo('    <td><a href="device_id.php?id=' . $row['id'] . '">' . $row['name'] . "</a></td>\n");
+    echo('    <td><a href="device_id.php?id=' . $row['id']);
     } else {
-    echo('    <td><a href="device_id.php?id=' . $row['svd_id'] . '">' . $row['name'] . "</a></td>\n");
+    echo('    <td><a href="device_id.php?svd_id=' . $row['svd_id']);
     }
+    echo('&name=' . $row['name'] . '&vendor=' . $vendor_name . '">' . $row['name'] . "</a></td>\n");
+
     // max Clock(MHz)
     echo("    <td>" . $row['CPU_clock_max_MHz'] . "</td>\n");
     // Flash (kB)
