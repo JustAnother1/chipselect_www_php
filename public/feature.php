@@ -104,12 +104,17 @@ if (isset($_GET['market_state']))
         $join = True;
         $where[] = "market_state_id = " . $_GET['market_state'];
     }
+    else
+    {
+        unset($_GET['market_state']);
+    }
 }
 
 if(True == $has_Filter)
 {
     echo("<table>\n");
     echo("  <tr>\n");
+    echo("    <th>Vendor</th>\n");
     echo("    <th>Name</th>\n");
     echo("    <th>max Clock(MHz)</th>\n");
     echo("    <th>Flash (kB)</th>\n");
@@ -118,16 +123,28 @@ if(True == $has_Filter)
     echo("    <th>Vcc max(V)</th>\n");
     echo("    <th>operation temperature min(°C)</th>\n");
     echo("    <th>operation temperature max(°C)</th>\n");
+    if(isset($_GET['market_state']))
+    {
+        echo("    <th>market state</th>\n");
+    }
     echo("    <th>description</th>\n");
     echo("  </tr>\n");
 
-    $fields = "name, id, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, description";
+    $fields = "microcontroller.name, microcontroller.id, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, description, p_vendor.name AS vendor_name";
+    if(isset($_GET['market_state']))
+    {
+        $fields = $fields . ", p_market_state.name AS market_state_name";
+    }
     $sql = "SELECT " . $fields . " FROM microcontroller";
+    // Vendor
+    $sql = $sql . " INNER JOIN pl_vendor ON (pl_vendor.dev_id = microcontroller.id)";
+    $sql = $sql . " INNER JOIN p_vendor ON (pl_vendor.vendor_id = p_vendor.id)";
     if(True == $join)
     {
         if(isset($_GET['market_state']))
         {
-            $sql = $sql . " INNER JOIN pl_market_state ON pl_market_state.dev_id = microcontroller.id";
+           $sql = $sql . " INNER JOIN pl_market_state ON pl_market_state.dev_id = microcontroller.id";
+           $sql = $sql . " INNER JOIN p_market_state ON pl_market_state.market_state_id = p_market_state.id";
         }
     }
     if(1 == count($where))
@@ -156,6 +173,7 @@ if(True == $has_Filter)
 
     foreach($pdo->query($sql) as $row) {
         echo("  <tr>\n");
+        echo("    <td>" . $row['vendor_name'] . "</td>\n");
         if ( 0 == $row['svd_id']) {
             // Name
             echo('    <td><a href="device_id.php?id=' . $row['id'] . '">' . $row['name'] . "</a></td>\n");
@@ -176,6 +194,10 @@ if(True == $has_Filter)
         echo("    <td>" . $row['Operating_Temperature_min_degC'] . "</td>\n");
         // operation temperature max(°C)
         echo("    <td>" . $row['Operating_Temperature_max_degC'] . "</td>\n");
+        if(isset($_GET['market_state']))
+        {
+            echo("    <td>" . $row['market_state_name'] . "</td>\n");
+        }
         // description
         echo("    <td>" . $row['description'] . "</td>\n");
         // end of row
