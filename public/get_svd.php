@@ -51,6 +51,10 @@ function print_cpu_element($xml_prefix, $xml_indent_step, $dbh, $device_id) {
                 print($cpu_indent . "<vendorSystickConfig>false</vendorSystickConfig>\n");
             }
         }
+        else
+        {
+            print($cpu_indent . "<vendorSystickConfig>false</vendorSystickConfig>\n");
+        }
         echo($xml_prefix. "</cpu>\n");
     }
     // else architecture unknown
@@ -69,6 +73,10 @@ function print_addressBlock_element($xml_prefix, $xml_indent_step, $dbh, $periph
         $elements_indent = $xml_prefix . $xml_indent_step;
         if(NULL != $row['address_offset']) {
             echo($elements_indent . "<offset>" . $row['address_offset'] . "</offset>\n");
+        }
+        else
+        {
+            echo($elements_indent . "<offset>0x0</offset>\n");
         }
         if(NULL != $row['size']) {
             echo($elements_indent . "<size>" . $row['size'] . "</size>\n");
@@ -89,7 +97,7 @@ function print_addressBlock_element($xml_prefix, $xml_indent_step, $dbh, $periph
 
 function print_interrupt_element($xml_prefix, $xml_indent_step, $dbh, $peripheral_ins__id ) {
     $sql = 'SELECT name, description, number'
-        . ' FROM p_interrupt INNER JOIN pl_interrupt ON pl_interrupt.irq_id	 = p_interrupt.id'
+        . ' FROM p_interrupt INNER JOIN pl_interrupt ON pl_interrupt.irq_id     = p_interrupt.id'
         . ' WHERE pl_interrupt.per_in_id = ?'
         . ' ORDER BY number';
     $stmt = $dbh->prepare($sql);
@@ -173,6 +181,10 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
         if(NULL != $row['bit_offset']) {
             echo($elements_indent . "<bitOffset>" . $row['bit_offset'] . "</bitOffset>\n");
         }
+        else
+        {
+            echo($elements_indent . "<bitOffset>0</bitOffset>\n");
+        }
         if(NULL != $row['size_bit']) {
             echo($elements_indent . "<bitWidth>" . $row['size_bit'] . "</bitWidth>\n");
         }
@@ -220,6 +232,10 @@ function print_registers_element($xml_prefix, $xml_indent_step, $dbh, $periphera
         }
         if(NULL != $row['address_offset']) {
             echo($elements_indent . "<addressOffset>" . $row['address_offset'] . "</addressOffset>\n");
+        }
+        else
+        {
+            echo($elements_indent . "<addressOffset>0x0</addressOffset>\n");
         }
         if(NULL != $row['size']) {
             echo($elements_indent . "<size>" . $row['size'] . "</size>\n");
@@ -345,6 +361,15 @@ $device_svd_id = $row['svd_id'];
 $device_addressable_unit = $row['Addressable_unit_bit'];
 $device_bus_width = $row['bus_width_bit'];
 $device_description = $row['description'];
+if(null == $device_description)
+{
+    $device_description = $device_name;
+}
+else if(0 ==  strlen($device_description))
+{
+    $device_description = $device_name;
+}
+
 
 // now check if this device and this Vendor match
 $stmt = $dbh->prepare('SELECT * FROM pl_vendor WHERE dev_id = ?');
@@ -367,8 +392,8 @@ if($vendor_id != $row['vendor_id']) {
 
 // checks done, start outputting the SVD data
 echo("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-echo("<!-- downloaded from chipselect.ing-poetter.de on " . date("d.F Y") . " -->\n");
-echo("<device schemaVersion=\"1.3\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:noNamespaceSchemaLocation=\"CMSIS-SVD.xsd\">");
+echo("<!-- downloaded from chipselect.org on " . date("d.F Y") . " -->\n");
+echo("<device schemaVersion=\"1.3\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:noNamespaceSchemaLocation=\"CMSIS-SVD.xsd\">\n");
 
 $xml_indent_step = "  ";
 $xml_prefix = $xml_indent_step;
