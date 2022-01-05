@@ -5,6 +5,7 @@
     <ul>
      <li><a href="index.php">Chips by Vendor</a></li>
      <li><a href="feature.php">Chips by feature</a></li>
+     <li><a href="documentation.php">documentation</a></li>
      <li><a href="about.php">about</a></li>
 <?php
 if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
