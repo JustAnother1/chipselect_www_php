@@ -1,13 +1,8 @@
 <?php
 
-function sanitize_string($dirty)
-{
-    $dirty = trim($dirty);
-    $dirty = trim($dirty, '"');
-    $bad = array(";", '"', "'");
-    $dirty = str_replace($bad, " ", $dirty);
-    return $dirty;
-}
+include("sanitize.inc");
+include("limit.inc");
+include("authenticate.inc");
 
 function handle_get($pdo)
 {
@@ -45,31 +40,47 @@ function handle_post($pdo)
         try
         {
             $sql = "INSERT INTO p_log (action, on_table, on_column, new_value, user)"
-                . ' VALUES ("INSERT", "p_vendor", "name", ?, ?)';
-                $statement = $pdo->prepare($sql);
-                $statement->execute(array(sanitize_string($_GET["name"]), $user_data["name"]));
-                $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                . ' VALUES ("INSERT", "p_vendor", ?, ?, ?)';
+            $statement = $pdo->prepare($sql);
 
+            $statement->execute(array("name", sanitize_string($_GET["name"]), $user_data["name"]));
+            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+            if(isset($_GET["url"]))
+            {
+                $statement->execute(array("url", sanitize_string($_GET["url"]), $user_data["name"]));
+                $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                // print_r($data);
+                // echo("now inserting");
+                $sql = "INSERT INTO p_vendor (name, url) VALUES (?, ?)";
+                $statement = $pdo->prepare($sql);
+                $statement->execute(array(sanitize_string($_GET["name"]), sanitize_string($_GET["url"])));
+                $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            }
+            else
+            {
                 // print_r($data);
                 // echo("now inserting");
                 $sql = "INSERT INTO p_vendor (name) VALUES (?)";
                 $statement = $pdo->prepare($sql);
                 $statement->execute(array(sanitize_string($_GET["name"])));
                 $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            }
 
-                // echo("now requesting id");
-                $sql = "SELECT LAST_INSERT_ID()";
-                $statement = $pdo->prepare($sql);
-                $statement->execute();
-                $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-                // print_r($data);
-                $array = array(
-                    "id" => $data[0]["LAST_INSERT_ID()"],
-                );
-                echo(json_encode(array($array)));
+            // echo("now requesting id");
+            $sql = "SELECT LAST_INSERT_ID()";
+            $statement = $pdo->prepare($sql);
+            $statement->execute();
+            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            // print_r($data);
+            $array = array(
+                "id" => $data[0]["LAST_INSERT_ID()"],
+            );
+            echo(json_encode(array($array)));
         }
         catch (PDOException $e)
         {
+            header('X-Debug: ' . $e);
             header('HTTP/1.0 500 Internal Server Error');
         }
     }
@@ -235,7 +246,6 @@ $req_type = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-include("authenticate.inc");
 switch ($req_type) {
     case 'GET':
         handle_get($pdo);
@@ -254,7 +264,7 @@ switch ($req_type) {
         break;
 
     default:
-        header('HTTP/1.0 400 Bad Request');
+        header('HTTP/1.0 501 Not Implemented');
         break;
 } // end of switch
 ?>

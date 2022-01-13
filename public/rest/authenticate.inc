@@ -19,11 +19,13 @@ function authenticate($pdo)
                 // check password
                 if(true == password_verify($_SERVER['PHP_AUTH_PW'], $row["password"]))
                 {
+                    $roles = explode(",", $row["roles"]);
+                    $roles = array_map('trim', $roles);
                     $array = array(
                         "name" => $row["name"],
                         "full_name" => $row["full_name"],
                         "email" => $row["email"],
-                        "roles" => $row["roles"],
+                        "user_roles" => $roles,
                     );
                     return $array;
                 }

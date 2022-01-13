@@ -20,7 +20,7 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
     if(isset($_POST['change_password']))
     {
         $stmt = $pdo->prepare('SELECT password FROM p_user WHERE name = ?');
-        if(true == $stmt->execute(array($_SESSION['login_name'])))
+        if(true == $stmt->execute(array($_SESSION['name'])))
         {
             $row = $stmt->fetch();
             if(false != $row)
@@ -31,7 +31,7 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
                     // old passwortd matches -> update password
                     $pw = password_hash($_POST['new_password'],  PASSWORD_DEFAULT);
                     $stmt = $pdo->prepare('UPDATE p_user SET password = ? WHERE name = ?');
-                    if(true == $stmt->execute(array($pw , $_SESSION['login_name'])))
+                    if(true == $stmt->execute(array($pw , $_SESSION['name'])))
                     {
                         echo("<br/><h1>Password has been changed!</h1>");
                     }
@@ -44,7 +44,7 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
     echo("<br/><h1>User account settings</h1>");
 
     $stmt = $pdo->prepare('SELECT name, password, full_name, email, roles FROM p_user WHERE name = ?');
-    if(true == $stmt->execute(array($_SESSION["login_name"])))
+    if(true == $stmt->execute(array($_SESSION["name"])))
     {
         $row = $stmt->fetch();
         if(false != $row)

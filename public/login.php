@@ -11,13 +11,13 @@ include("start.inc");
     </head>
     <body>
 <?php
-if (isset($_POST["login_name"]) && isset($_POST["login_passwort"]))
+if (isset($_POST["name"]) && isset($_POST["login_passwort"]))
 {
     include ("../secret.inc");
     $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
-    $stmt = $pdo->prepare('SELECT name, password, full_name FROM p_user WHERE name = ?');
-    if(true == $stmt->execute(array($_POST["login_name"])))
+    $stmt = $pdo->prepare('SELECT name, password, full_name, email, roles FROM p_user WHERE name = ?');
+    if(true == $stmt->execute(array($_POST["name"])))
     {
         $row = $stmt->fetch();
         if(false != $row)
@@ -25,9 +25,13 @@ if (isset($_POST["login_name"]) && isset($_POST["login_passwort"]))
             // check password
             if(true == password_verify($_POST["login_passwort"], $row["password"]))
             {
+                $roles = explode(",", $row["roles"]);
+                $roles = array_map('trim', $roles);
                 $_SESSION["login"] = 1;
                 $_SESSION['full_name'] = $row["full_name"];
-                $_SESSION['login_name'] = $row["name"];
+                $_SESSION['name'] = $row["name"];
+                $_SESSION['email'] = $row["email"];
+                $_SESSION['user_roles'] = $roles;
             }
         }
     }
@@ -47,7 +51,7 @@ else
     <form method="POST">
     <b>Login</b><br />
     <br />
-    Username: <input name="login_name"><br />
+    Username: <input name="name"><br />
     Password: <input name="login_passwort" type=password><br />
     <br />
     <input type=submit name=submit value="login">
