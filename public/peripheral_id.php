@@ -215,11 +215,13 @@ foreach ($stmt as $row) {
         }
     }
     if(NULL != $row['reset_Mask']) {
-        echo("    reset_Mask : 0x" . dechex(intval($row['reset_Mask'])) . "<br />\n");
+        if((32 == $row['size']) && ('ffffffff' != dechex(intval($row['reset_Mask']))))
+        {
+            echo("    reset_Mask : 0x" . dechex(intval($row['reset_Mask'])) . "<br />\n");
+        }
+        // Reset Mask of 0xffffffff just means all the pins are reset on reset. Duh! The mask is only interesting if not all bits are affected.
     }
     echo("</p>\n");
-    // echo("<img src=\"reg_" . $row['id'] . ".svg\" width=\"300\" height=\"100\" alt=\"Register with bits\" loading=\"lazy\" />\n");
-    // register_image( $row['id']);
     print_fields($dbh, $row['display_name'],  $row['id'], $row['size'], $row['access'], $row['reset_value']);
     echo("<br />\n");
 }
