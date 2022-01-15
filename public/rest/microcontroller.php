@@ -58,7 +58,7 @@ function handle_get($pdo)
             . " ORDER BY microcontroller.id ASC"
             . " LIMIT " . $limit;
     }
-    // header('X-SQL: ' . $sql);
+    header('X-SQL: ' . $sql);
     try
     {
         $statement = $pdo->prepare($sql);

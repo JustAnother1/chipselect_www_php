@@ -25,7 +25,9 @@ if(isset($_GET['id']))
         exit;
     }
 
-    $sql = 'SELECT name, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, description'
+    $sql = 'SELECT name, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V'
+         . ', Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id'
+         . ', description, architecture_id, market_state_id, package_id, vendor_id'
         . ' FROM microcontroller '
         . ' WHERE id = ?';
 
@@ -66,16 +68,16 @@ if(isset($_GET['id']))
     echo("<h1>" . $device_data['name'] . "</h1>\n");
     // Vendor
     $sql = 'SELECT name, url, id'
-        . ' FROM p_vendor INNER JOIN pl_vendor ON pl_vendor.vendor_id = p_vendor.id'
-        . ' WHERE pl_vendor.dev_id = ?';
+        . ' FROM p_vendor'
+        . ' WHERE id = ?';
     $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($device_data['id']));
+    $stmt->execute(array($device_data['vendor_id']));
     $row = $stmt->fetch();
     if( false != $row) {
         echo("<div id=\"vendor\">\n");
         echo("    <p>Vendor Web: <a href=\"" . $row['url'] . "\">" . $row['name'] . "</a></p>\n");
         echo("    <p><a href=\"" .  $row['name'] . "--" . $device_data['name'] . ".svd\" download>download svd file</a></p>\n");
-        echo("    <p><a href=\"vendor_id.php?id=" . $row['id'] . "\">All devices of this Vendor</a></p>\n");
+        echo("    <p><a href=\"vendor_id.php?name=" . $row['name'] . "\">All devices of this Vendor</a></p>\n");
         echo("</div>\n");
     }
 
@@ -110,10 +112,10 @@ if(isset($_GET['id']))
 
     // Package
     $sql = 'SELECT name'
-        . ' FROM  p_package INNER JOIN pl_package ON pl_package.package_id =  p_package.id'
-        . ' WHERE pl_package.dev_id = ?';
+        . ' FROM  p_package'
+        . ' WHERE id = ?';
     $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($device_data['id']));
+    $stmt->execute(array($device_data['package_id']));
     $row = $stmt->fetch();
     if( false != $row) {
         echo("<div id=\"package\">\n");
@@ -123,10 +125,10 @@ if(isset($_GET['id']))
 
     // Market State
     $sql = 'SELECT name'
-        . ' FROM  p_market_state INNER JOIN pl_market_state ON pl_market_state.market_state_id =  p_market_state.id'
-        . ' WHERE pl_market_state.dev_id = ?';
+        . ' FROM  p_market_state'
+        . ' WHERE id = ?';
     $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($device_data['id']));
+    $stmt->execute(array($device_data['market_state_id']));
     $row = $stmt->fetch();
     if( false != $row) {
         echo("<div id=\"market_state\">\n");
@@ -147,12 +149,34 @@ else if(isset($_GET['svd_id']))
         echo("</html>\n");
         exit;
     }
-    $device_data['id'] = $device_id;
 
-    if(isset($_GET['name']))
-    {
-        $device_data['name'] = $_GET['name'];
+    $sql = 'SELECT name, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V'
+         . ', Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id'
+         . ', description, architecture_id, market_state_id, package_id, vendor_id'
+         . ' FROM microcontroller '
+         . ' WHERE id = ?';
+
+    $stmt = $dbh->prepare($sql);
+    if(false == $stmt->execute(array($device_id))) {
+        echo("    </head>\n");
+        echo("    <body>\n");
+        echo("     <h1> Can not talk to database !</h1>\n");
+        echo("    </body>\n");
+        echo("</html>\n");
+        exit;
     }
+    $row = $stmt->fetch();
+    if(false == $row) {
+        echo("    </head>\n");
+        echo("    <body>\n");
+        echo("     <h1> Invalid device id of " . $device_id . "</h1>\n");
+        echo("    </body>\n");
+        echo("</html>\n");
+        exit;
+    }
+
+    $device_data = $row;
+    $device_data['id'] = $device_id;
 
     echo('<title>' . $device_data['name'] . '</title>');
 
@@ -165,10 +189,9 @@ else if(isset($_GET['svd_id']))
     include ("header.inc");
     echo("<h1>" . $device_data['name'] . "</h1>\n");
     // Vendor
-    $sql = 'SELECT microcontroller.name AS m_name , p_vendor.name, p_vendor.url'
-        . ' FROM microcontroller, p_vendor, pl_vendor'
-        . ' WHERE pl_vendor.vendor_id = p_vendor.id AND microcontroller.id = pl_vendor.dev_id'
-        . ' AND microcontroller.id = ?';
+    $sql = 'SELECT name, url'
+        . ' FROM p_vendor'
+        . ' WHERE vendor_id = ?';
     // echo("\n\n" . $sql . "\n\n");
     $stmt = $dbh->prepare($sql);
     $stmt->execute(array($device_data['id']));
@@ -177,7 +200,7 @@ else if(isset($_GET['svd_id']))
         // print_r($row);
         echo("<div id=\"vendor\">\n");
         echo("    <p>Vendor Web: <a href=\"" . $row['url'] . "\">" . $row['name'] . "</a></p>\n");
-        echo("    <p><a href=\"" .  $row['name'] . "--" . $row['m_name'] . ".svd\" download>download svd file</a></p>\n");
+        echo("    <p><a href=\"" .  $row['name'] . "--" . $device_data['name'] . ".svd\" download>download svd file</a></p>\n");
         echo("    <p><a href=\"vendor_id.php?name=" . $row['name'] . "\">All devices of this Vendor</a></p>\n");
         echo("</div>\n");
     }
@@ -194,10 +217,10 @@ else
 
 // Architecture
 $sql = 'SELECT name, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick'
-    . ' FROM p_architecture INNER JOIN pl_architecture ON pl_architecture.arch_id = p_architecture.id'
-    . ' WHERE pl_architecture.dev_id = ?';
+    . ' FROM p_architecture'
+    . ' WHERE id = ?';
 $stmt = $dbh->prepare($sql);
-$stmt->execute(array($device_data['id']));
+$stmt->execute(array($device_data['architecture_id']));
 $row = $stmt->fetch();
 if( false != $row) {
     echo("<div id=\"architecture\">\n");

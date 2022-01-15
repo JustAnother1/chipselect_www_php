@@ -80,8 +80,8 @@ echo("    <th>operation temperature max(°C)</th>\n");
 echo("    <th>description</th>\n");
 echo("  </tr>\n");
 $sql = 'SELECT name, id, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, description'
-    . ' FROM microcontroller INNER JOIN pl_vendor ON pl_vendor.dev_id = microcontroller.id'
-    . ' WHERE pl_vendor.vendor_id = ?'
+    . ' FROM microcontroller'
+    . ' WHERE vendor_id = ?'
     . ' ORDER by name';
 $stmt = $dbh->prepare($sql);
 $stmt->execute(array($vendor_id));

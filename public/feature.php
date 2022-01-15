@@ -42,7 +42,11 @@ include ("../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 $sql = 'SELECT name, id FROM p_market_state ORDER by name';
+
+$market_states = array();
+
 foreach($pdo->query($sql) as $row) {
+    $market_states[$row['id']] = $row['name'];
     if (isset($_GET['market_state']))
     {
         if($row['id'] == $_GET['market_state'])
@@ -130,23 +134,16 @@ if(True == $has_Filter)
     echo("    <th>description</th>\n");
     echo("  </tr>\n");
 
-    $fields = "microcontroller.name, microcontroller.id, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, description, p_vendor.name AS vendor_name";
-    if(isset($_GET['market_state']))
-    {
-        $fields = $fields . ", p_market_state.name AS market_state_name";
-    }
-    $sql = "SELECT " . $fields . " FROM microcontroller";
     // Vendor
-    $sql = $sql . " INNER JOIN pl_vendor ON (pl_vendor.dev_id = microcontroller.id)";
-    $sql = $sql . " INNER JOIN p_vendor ON (pl_vendor.vendor_id = p_vendor.id)";
-    if(True == $join)
-    {
-        if(isset($_GET['market_state']))
-        {
-           $sql = $sql . " INNER JOIN pl_market_state ON pl_market_state.dev_id = microcontroller.id";
-           $sql = $sql . " INNER JOIN p_market_state ON pl_market_state.market_state_id = p_market_state.id";
-        }
+    $sql = 'SELECT name, id FROM p_vendor';
+    $vendors = array();
+    foreach($pdo->query($sql) as $row) {
+        $vendors[$row['id']] = $row['name'];
     }
+
+    $fields = "name, id, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, description, vendor_id, market_state_id";
+    $sql = "SELECT " . $fields . " FROM microcontroller";
+
     if(1 == count($where))
     {
         $sql = $sql . " WHERE " . $where[0];
@@ -173,7 +170,8 @@ if(True == $has_Filter)
 
     foreach($pdo->query($sql) as $row) {
         echo("  <tr>\n");
-        echo("    <td>" . $row['vendor_name'] . "</td>\n");
+        echo("    <td><a href=\"vendor_id.php?name=" . $vendors[$row['vendor_id']] . "\">"
+            . $vendors[$row['vendor_id']] . "</a></td>\n");
         if ( 0 == $row['svd_id']) {
             // Name
             echo('    <td><a href="device_id.php?id=' . $row['id'] . '">' . $row['name'] . "</a></td>\n");
@@ -196,7 +194,7 @@ if(True == $has_Filter)
         echo("    <td>" . $row['Operating_Temperature_max_degC'] . "</td>\n");
         if(isset($_GET['market_state']))
         {
-            echo("    <td>" . $row['market_state_name'] . "</td>\n");
+            echo("    <td>" . $market_states[$row['market_state_id']] . "</td>\n");
         }
         // description
         echo("    <td>" . $row['description'] . "</td>\n");

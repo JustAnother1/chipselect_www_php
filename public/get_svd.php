@@ -1,18 +1,12 @@
 <?php
 
-$vendor_name = $_GET['vend'];
-$device_name = $_GET['dev'];
-
-// echo("Vendor : " . $vendor_name);
-// echo("   Device : " . $device_name);
-
-function print_cpu_element($xml_prefix, $xml_indent_step, $dbh, $device_id) {
+function print_cpu_element($xml_prefix, $xml_indent_step, $dbh, $architecture_id) {
     // Architecture
     $sql = 'SELECT name, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick'
-        . ' FROM p_architecture INNER JOIN pl_architecture ON pl_architecture.arch_id = p_architecture.id'
-        . ' WHERE pl_architecture.dev_id = ?';
+        . ' FROM p_architecture'
+        . ' WHERE id = ?';
     $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($device_id));
+    $stmt->execute(array($architecture_id));
     $row = $stmt->fetch();
     if( false != $row) {
         echo($xml_prefix . "<cpu>\n");
@@ -204,7 +198,6 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
     echo($xml_prefix . "</fields>\n");
 }
 
-
 function print_registers_element($xml_prefix, $xml_indent_step, $dbh, $peripheral_id ) {
     echo($xml_prefix . "<registers>\n");
     $sql = 'SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register,'
@@ -273,13 +266,10 @@ function print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_
         . ' WHERE pl_peripheral_instance.dev_id = ?'
         . ' ORDER BY name';
     $stmt = $dbh->prepare($sql);
+    $stmt->execute(array($device_id));
 
     $group_sql = "SELECT group_name FROM p_peripheral WHERE id = ?";
     $group_stmt = $dbh->prepare($group_sql);
-
-
-
-    $stmt->execute(array($device_id));
 
     $periph_indent = $xml_prefix . $xml_indent_step;
     echo($xml_prefix . "<peripherals>\n");
@@ -311,6 +301,15 @@ function print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_
 }
 
 
+// main():
+// =======
+
+$vendor_name = $_GET['vend'];
+$device_name = $_GET['dev'];
+
+// echo("Vendor : " . $vendor_name);
+// echo("   Device : " . $device_name);
+
 include ("../secret.inc");
 // connect to database
 $dbh = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
@@ -333,10 +332,7 @@ if(0 != $row['alternative']) {
     $stmt->execute(array($row['alternative']));
     $row = $stmt->fetch();
 }
-
-$vendor_id = $row['id'];
-$vendor_name = $row['name'];
-$vendor_url = $row['url'];
+$vendor = $row;
 
 // now the device data
 $stmt = $dbh->prepare('SELECT * FROM microcontroller WHERE name = ?');
@@ -347,48 +343,23 @@ if(false == $row) {
     echo("ERROR: Invalid device name of " . $device_name . "\n");
     exit;
 }
-
-$device_id = $row['id'];
-$device_name = $row['name'];
-$device_clock_max = $row['CPU_clock_max_MHz'];
-$device_Flash = $row['Flash_size_kB'];
-$device_RAM = $row['RAM_size_kB'];
-$device_Vccmin = $row['Supply_Voltage_min_V'];
-$device_Vccmax = $row['Supply_Voltage_max_V'];
-$device_tempmin = $row['Operating_Temperature_min_degC'];
-$device_tempmax = $row['Operating_Temperature_max_degC'];
-$device_svd_id = $row['svd_id'];
-$device_addressable_unit = $row['Addressable_unit_bit'];
-$device_bus_width = $row['bus_width_bit'];
-$device_description = $row['description'];
-if(null == $device_description)
-{
-    $device_description = $device_name;
-}
-else if(0 ==  strlen($device_description))
-{
-    $device_description = $device_name;
-}
-
+$device = $row;
 
 // now check if this device and this Vendor match
-$stmt = $dbh->prepare('SELECT * FROM pl_vendor WHERE dev_id = ?');
-$stmt->execute(array($device_id));
-$row = $stmt->fetch();
-if(false == $row) {
+if($row['vendor_id'] != $vendor['id']) {
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-    echo("ERROR: No Vendor for device id of " . $device_id . "\n");
+    echo("ERROR: Invalid device name of " . $device['name'] . " for the vendor " . $vendor['name'] . "\n");
     exit;
 }
 
-if($vendor_id != $row['vendor_id']) {
-    //TODO if we get collisions with one name to multiple Vendors then the database will return more than one result, and we would need to then find the correct one,...
-    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-    echo("ERROR: Vendor mismatch " . $vendor_id . " vs " . $row['vendor_id'] . "\n");
-    exit;
+if(null == $device['description'])
+{
+    $device['description'] = $device['name'];
 }
-
-
+else if(0 ==  strlen($device['description']))
+{
+    $device['description'] = $device['name'];
+}
 
 // checks done, start outputting the SVD data
 echo("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
@@ -398,16 +369,16 @@ echo("<device schemaVersion=\"1.3\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema-
 $xml_indent_step = "  ";
 $xml_prefix = $xml_indent_step;
 
-echo($xml_prefix . "<vendor>" . $vendor_name . "</vendor>\n");
-echo($xml_prefix . "<name>" . $device_name . "</name>\n");
+echo($xml_prefix . "<vendor>" . $vendor['name'] . "</vendor>\n");
+echo($xml_prefix . "<name>" . $device['name'] . "</name>\n");
 // Version is the date of creation.
 // SVD Spec: Silicon vendors [..] ensure that all updated and released copies have
 // a unique version string. Higher numbers indicate a more recent version.
 echo($xml_prefix. "<version>" . date('Y.m.d') . "</version>\n");
-echo($xml_prefix . "<description>" . $device_description . "</description>\n");
-print_cpu_element($xml_prefix, $xml_indent_step, $dbh, $device_id);
-echo($xml_prefix . "<addressUnitBits>" . $device_addressable_unit . "</addressUnitBits>\n");
-echo($xml_prefix. "<width>" . $device_bus_width . "</width>\n");
-print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_id);
+echo($xml_prefix . "<description>" . $device['description'] . "</description>\n");
+print_cpu_element($xml_prefix, $xml_indent_step, $dbh, $device['architecture_id']);
+echo($xml_prefix . "<addressUnitBits>" . $device['Addressable_unit_bit'] . "</addressUnitBits>\n");
+echo($xml_prefix. "<width>" . $device['bus_width_bit'] . "</width>\n");
+print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device['id']);
 echo("</device>\n");
 ?>
