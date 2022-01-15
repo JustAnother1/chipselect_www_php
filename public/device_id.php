@@ -191,7 +191,7 @@ else if(isset($_GET['svd_id']))
     // Vendor
     $sql = 'SELECT name, url'
         . ' FROM p_vendor'
-        . ' WHERE vendor_id = ?';
+        . ' WHERE id = ?';
     // echo("\n\n" . $sql . "\n\n");
     $stmt = $dbh->prepare($sql);
     $stmt->execute(array($device_data['id']));
