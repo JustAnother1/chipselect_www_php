@@ -173,10 +173,10 @@ class svg {
         if($this->size > 16) {
             for($i = 0; $i < 16; $i++)
             {
-                $v = $res_val%2;
+                $v = (int)$res_val%2;
                 if($res_val > 1)
                 {
-                    $res_val = $res_val/2;
+                    $res_val = (int)$res_val/2;
                 }
                 else
                 {
@@ -188,10 +188,10 @@ class svg {
             }
             for($i = 16; $i < $this->size; $i++)
             {
-                $v = $res_val%2;
+                $v = (int)$res_val%2;
                 if($res_val > 1)
                 {
-                    $res_val = $res_val/2;
+                    $res_val = (int)$res_val/2;
                 }
                 else
                 {
@@ -204,10 +204,10 @@ class svg {
         } else {
             for($i = 0; $i < $this->size; $i++)
             {
-                $v = $res_val%2;
+                $v = (int)$res_val%2;
                 if($res_val > 1)
                 {
-                    $res_val = $res_val/2;
+                    $res_val = (int)$res_val/2;
                 }
                 else
                 {
