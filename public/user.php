@@ -28,7 +28,7 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
                 // check password
                 if(true == password_verify($_POST['old_password'], $row["password"]))
                 {
-                    // old passwortd matches -> update password
+                    // old password matches -> update password
                     $pw = password_hash($_POST['new_password'],  PASSWORD_DEFAULT);
                     $stmt = $pdo->prepare('UPDATE p_user SET password = ? WHERE name = ?');
                     if(true == $stmt->execute(array($pw , $_SESSION['name'])))
@@ -57,7 +57,7 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
     }
 
     // change password
-    echo("<br/><h2>chnage password</h2>\n");
+    echo("<br/><h2>change password</h2>\n");
     echo("<form method=\"POST\">\n");
     echo("current password: <input name=\"old_password\" type=password><br />\n");
     echo("new password: <input name=\"new_password\" type=password><br />");
