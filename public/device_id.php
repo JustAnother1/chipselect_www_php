@@ -213,6 +213,7 @@ else
     echo("     <h1> missing device id</h1>\n");
     echo("    </body>\n");
     echo("</html>\n");
+    exit;
 }
 
 // Architecture

@@ -149,14 +149,22 @@ function handle_put($pdo)
                         $data['alternative'] = $newAlt;
                     }
                 }
+                if(True == $changed)
+                {
+                    // echo("now updating");
+                    $sql = "UPDATE p_vendor SET name = ?, url = ?, alternative = ? WHERE id =?";
+                    $statement = $pdo->prepare($sql);
+                    $statement->execute(array($data["name"], $data["url"], $data["alternative"], $data["id"]));
+                    $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                // echo("now updating");
-                $sql = "UPDATE p_vendor SET name = ?, url = ?, alternative = ? WHERE id =?";
-                $statement = $pdo->prepare($sql);
-                $statement->execute(array($data["name"], $data["url"], $data["alternative"], $data["id"]));
-                $statement->fetchAll(PDO::FETCH_ASSOC);
-
-                echo(json_encode(array($data)));
+                    echo(json_encode(array($data)));
+                }
+                else
+                {
+                    // no change requested
+                    header("X-debug: no change requested");
+                    header('HTTP/1.0 400 Bad Request');
+                }
             }
             else
             {
