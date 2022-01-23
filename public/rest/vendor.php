@@ -9,11 +9,11 @@ function handle_get($pdo)
     // print_r($_GET);
     if(isset($_GET["id"]))
     {
-        $sql = "SELECT id, name, url FROM p_vendor WHERE id = \"" . sanitize_string($_GET["id"]) . "\"";
+        $sql = "SELECT id, name, url, alternative FROM p_vendor WHERE id = \"" . sanitize_string($_GET["id"]) . "\"";
     }
     else if(isset($_GET["name"]))
     {
-        $sql = "SELECT id, name, url FROM p_vendor WHERE name = \"" . sanitize_string($_GET["name"]) . "\"";
+        $sql = "SELECT id, name, url, alternative FROM p_vendor WHERE name = \"" . sanitize_string($_GET["name"]) . "\"";
     }
     else
     {
@@ -24,6 +24,15 @@ function handle_get($pdo)
         $statement = $pdo->prepare($sql);
         $statement->execute();
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+        if(isset($data[0]["alternative"]))
+        {
+            if(0 != $data[0]["alternative"])
+            {
+                $data[0]["id"] = $data[0]["alternative"];
+            }
+            // else OK
+            unset($data[0]["alternative"]);
+        }
         echo json_encode($data);
     }
     catch (PDOException $e)
