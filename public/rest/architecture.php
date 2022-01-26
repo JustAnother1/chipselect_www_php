@@ -44,7 +44,7 @@ function handle_post($pdo)
         try
         {
             $sql = "INSERT INTO p_log (action, on_table, on_column, new_value, user)"
-                . ' VALUES ("INSERT", "microcontroller", ?, ?, ?)';
+                . ' VALUES ("INSERT", "p_architecture", ?, ?, ?)';
             $statement = $pdo->prepare($sql);
 
             $statement->execute(array("name", sanitize_string($_GET["name"]), $user_data["name"]));
@@ -171,7 +171,7 @@ function handle_put($pdo)
             {
                 $changed = false;
                 $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, old_value, new_value, user)"
-                    . ' VALUES ("PUT", "p_vendor", ' . $data['id']. ', ?, ?, ?, ?)';
+                    . ' VALUES ("PUT", "p_architecture", ' . $data['id']. ', ?, ?, ?, ?)';
                 $statement = $pdo->prepare($sql);
                 // name
                 if(isset($_GET["name"]))
@@ -331,24 +331,24 @@ function handle_delete($pdo)
             if(isset($data['id']))
             {
                 $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, old_value, user)"
-                    . ' VALUES ("DELETE", "p_vendor", ?, ?, ?, ?)';
-                    $statement = $pdo->prepare($sql);
-                    $statement->execute(array($data['id'], "name", $data['name'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "alternative", $data['alternative'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "svd_name", $data['svd_name'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "revision", $data['revision'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "endian", $data['endian'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "hasMPU", $data['hasMPU'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "hasFPU", $data['hasFPU'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "interrupt_prio_bits", $data['interrupt_prio_bits'], $user_data["name"]));
-                    $statement->execute(array($data['id'], "ARM_Vendor_systick", $data['ARM_Vendor_systick'], $user_data["name"]));
+                . ' VALUES ("DELETE", "p_architecture", ?, ?, ?, ?)';
+                $statement = $pdo->prepare($sql);
+                $statement->execute(array($data['id'], "name", $data['name'], $user_data["name"]));
+                $statement->execute(array($data['id'], "alternative", $data['alternative'], $user_data["name"]));
+                $statement->execute(array($data['id'], "svd_name", $data['svd_name'], $user_data["name"]));
+                $statement->execute(array($data['id'], "revision", $data['revision'], $user_data["name"]));
+                $statement->execute(array($data['id'], "endian", $data['endian'], $user_data["name"]));
+                $statement->execute(array($data['id'], "hasMPU", $data['hasMPU'], $user_data["name"]));
+                $statement->execute(array($data['id'], "hasFPU", $data['hasFPU'], $user_data["name"]));
+                $statement->execute(array($data['id'], "interrupt_prio_bits", $data['interrupt_prio_bits'], $user_data["name"]));
+                $statement->execute(array($data['id'], "ARM_Vendor_systick", $data['ARM_Vendor_systick'], $user_data["name"]));
 
-                    $sql = "DELETE FROM p_architecture WHERE id =?";
-                    $statement = $pdo->prepare($sql);
-                    $statement->execute(array($data["id"]));
-                    $statement->fetchAll(PDO::FETCH_ASSOC);
+                $sql = "DELETE FROM p_architecture WHERE id =?";
+                $statement = $pdo->prepare($sql);
+                $statement->execute(array($data["id"]));
+                $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                    echo(json_encode(array($data)));
+                echo(json_encode(array($data)));
             }
             else
             {

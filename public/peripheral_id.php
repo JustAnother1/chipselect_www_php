@@ -1,4 +1,4 @@
-<?php
+ <?php
 include("start.inc");
 ?>
 <!DOCTYPE html>

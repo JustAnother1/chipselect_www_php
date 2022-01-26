@@ -280,7 +280,7 @@ function handle_put($pdo)
             {
                 $changed = false;
                 $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, old_value, new_value, user)"
-                    . ' VALUES ("PUT", "p_vendor", ' . $data['id']. ', ?, ?, ?, ?)';
+                    . ' VALUES ("PUT", "microcontroller", ' . $data['id']. ', ?, ?, ?, ?)';
                     $statement = $pdo->prepare($sql);
                     // name
                     if(isset($_GET["name"]))
@@ -566,7 +566,7 @@ function handle_delete($pdo)
             if(isset($data['id']))
             {
                 $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, old_value, user)"
-                    . ' VALUES ("DELETE", "p_vendor", ?, ?, ?, ?)';
+                    . ' VALUES ("DELETE", "microcontroller", ?, ?, ?, ?)';
                     $statement = $pdo->prepare($sql);
                     $statement->execute(array($data['id'], "name", $data['name'], $user_data["name"]));
                     $statement->execute(array($data['id'], "CPU_clock_max_MHz", $data['CPU_clock_max_MHz'], $user_data["name"]));
