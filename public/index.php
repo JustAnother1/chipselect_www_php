@@ -73,7 +73,6 @@ echo("</form>\n");
 
 // Results
 $has_Filter = False;
-$join = False;
 $where = array();
 
 if (isset($_GET['minFreq']))
@@ -105,7 +104,6 @@ if (isset($_GET['market_state']))
     if(-1 !=  $_GET['market_state'])
     {
         $has_Filter = True;
-        $join = True;
         $where[] = "market_state_id = " . $_GET['market_state'];
     }
     else
