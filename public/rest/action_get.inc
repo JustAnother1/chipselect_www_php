@@ -50,6 +50,18 @@ function handle_get($pdo, $opts)
             $statement = $pdo->prepare($opts["sql"]);
             $statement->execute();
             $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            if(isset($opts["hexColumns"]))
+            {
+                $toHexCol = $opts["hexColumns"];
+                $hexIdx = 0;
+                for($hexIdx = 0; $hexIdx< count($toHexCol); $hexIdx++)
+                {
+                    foreach($data as &$per) // the & before $per makes the changes to the content apply to $data
+                    {
+                        $per[$toHexCol[$hexIdx]] = "0x" . dechex($per[$toHexCol[$hexIdx]]);
+                    }
+                }
+            }
             echo json_encode($data);
         }
         catch (PDOException $e)
