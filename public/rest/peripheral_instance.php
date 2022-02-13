@@ -4,6 +4,11 @@ include("sanitize.inc");
 include("limit.inc");
 include("authenticate.inc");
 
+include("action_get.inc");
+include("action_post.inc");
+include("action_put.inc");
+include("action_delete.inc");
+
 $req_type = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 include ("../../secret.inc");
