@@ -38,6 +38,8 @@ switch ($req_type) {
         "entryId" => "name",
         "table" => "p_interrupt",
         "columns" => array( "description", "number" ),
+        "link_id" => "per_id",
+        "lookup" => "INSERT INTO pl_interrupt (per_in_id, irq_id) VALUES (?, ?)"
         );
         handle_post($pdo, $opts);
         break;
