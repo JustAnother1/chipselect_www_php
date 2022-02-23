@@ -62,7 +62,10 @@ This way the user will know to address chipselect if the information is not up t
 If you think that some of the informations presented on chipselct
 should not be publicly available because it is protected by intellectual property- or copy-rights, then please contact us so that we can correct the situation.
 <br/>
-ChipSelect is open source! <a href="https://github.com/JustAnother1/chipselect_www_php">source</a> <a href="https://github.com/JustAnother1/chipselect_doc">documentation</a>
+ChipSelect is open source!
+<a href="https://github.com/JustAnother1/chipselect_www_php">source</a>
+<a href="https://github.com/JustAnother1/chipselect_doc">documentation</a>
+<a href="https://github.com/JustAnother1/chipselect_importer">importer</a>
 <br/>
 <?php
 include ("footer.inc");

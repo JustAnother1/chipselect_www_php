@@ -275,7 +275,7 @@ $sql = 'SELECT name, description, base_address, peripheral_id, per_in_id'
 $stmt = $dbh->prepare($sql);
 
 $irq_sql = 'SELECT name, description, number'
-        . ' FROM p_interrupt INNER JOIN pl_interrupt ON pl_interrupt.irq_id     = p_interrupt.id'
+        . ' FROM p_interrupt INNER JOIN pl_interrupt ON pl_interrupt.irq_id = p_interrupt.id'
         . ' WHERE pl_interrupt.per_in_id = ?'
         . ' ORDER BY number';
 $irq_stmt = $dbh->prepare($irq_sql);
