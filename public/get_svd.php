@@ -261,12 +261,15 @@ function print_registers_element($xml_prefix, $xml_indent_step, $dbh, $periphera
 
 function print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_id ) {
     // Peripheral Instances
-    $sql = 'SELECT name, description, base_address, peripheral_id, per_in_id, disable_Condition, group_name'
+    $sql = 'SELECT name, description, base_address, peripheral_id, per_in_id, disable_Condition'
         . ' FROM p_peripheral_instance INNER JOIN  pl_peripheral_instance ON  pl_peripheral_instance.per_in_id  = p_peripheral_instance.id'
         . ' WHERE pl_peripheral_instance.dev_id = ?'
         . ' ORDER BY name';
     $stmt = $dbh->prepare($sql);
     $stmt->execute(array($device_id));
+
+    $group_sql = "SELECT group_name FROM p_peripheral WHERE id = ?";
+    $group_stmt = $dbh->prepare($group_sql);
 
     $periph_indent = $xml_prefix . $xml_indent_step;
     echo($xml_prefix . "<peripherals>\n");
@@ -278,7 +281,10 @@ function print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_
         // description
         echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
         // groupName
-        echo($elements_indent . "<groupName>" . $row['group_name'] . "</groupName>\n");
+        $group_stmt->execute(array($row['peripheral_id']));
+        foreach ($group_stmt as $grp_row) {
+            echo($elements_indent . "<groupName>" . $grp_row['group_name'] . "</groupName>\n");
+        }
         // disableCondition
         if(NULL != $row['disable_Condition']) {
             echo($elements_indent . "<disableCondition>" . $row['disable_Condition'] . "</disableCondition>\n");

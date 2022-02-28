@@ -23,7 +23,7 @@ if(!is_numeric($peripheral_id)) {
 }
 
 $sql = 'SELECT group_name'
-    . ' FROM p_peripheral_instance '
+    . ' FROM p_peripheral '
     . ' WHERE id = ?';
 $stmt = $dbh->prepare($sql);
 if(false == $stmt->execute(array($peripheral_id))) {
@@ -45,7 +45,7 @@ if(false == $row) {
 }
 $peripheral_data = $row;
 
-echo('<title>' . $peripheral_data['group_name'] . '</title>\n');
+echo('<title>' . $peripheral_data['group_name'] . '</title>');
         ?>
         <meta  http-equiv="content-type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="style.css">
