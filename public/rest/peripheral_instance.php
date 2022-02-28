@@ -20,7 +20,7 @@ switch ($req_type) {
             $_GET["pl_peripheral_instance.dev_id"] = $_GET["dev_id"];
         }
         $opts = array(
-        "sql" => "SELECT id, name, description, base_address, peripheral_id, disable_Condition, dev_id, per_in_id"
+        "sql" => "SELECT id, name, description, base_address, peripheral_id, disable_Condition, group_name, dev_id, per_in_id"
             . " FROM p_peripheral_instance"
             . " INNER JOIN pl_peripheral_instance ON pl_peripheral_instance.per_in_id = p_peripheral_instance.id",
         "filters" => array( "pl_peripheral_instance.dev_id"),
@@ -33,7 +33,7 @@ switch ($req_type) {
     case 'POST':
         $opts = array(
         "entryId" => "group_name",
-        "table" => "p_peripheral",
+        "table" => "p_peripheral_instance",
         "columns" => array(  ),
         );
         handle_post($pdo, $opts);
@@ -42,8 +42,8 @@ switch ($req_type) {
     case 'PUT':
         $opts = array(
         "filters" => array( "id" ),
-        "sql" => "SELECT id, group_name FROM p_peripheral",
-        "table" => "p_peripheral",
+        "sql" => "SELECT id, group_name FROM p_peripheral_instance",
+        "table" => "p_peripheral_instance",
         "columns" => array( "name" ),
         );
         handle_put($pdo, $opts);
@@ -52,9 +52,9 @@ switch ($req_type) {
     case 'DELETE':
         $opts = array(
         "filters" => array( "id", "group_name" ),
-        "sql" => "SELECT id, group_name FROM p_peripheral",
-        "table" => "p_peripheral",
-        "columns" => array( "p_peripheral" ),
+        "sql" => "SELECT id, group_name FROM p_peripheral_instance",
+        "table" => "p_peripheral_instance",
+        "columns" => array( "p_peripheral_instance" ),
         );
         handle_delete($pdo, $opts);
         break;
