@@ -35,6 +35,7 @@ if((isset($_SESSION['login'])) && ($_SESSION["login"] == 1))
     echo("    <th>action</th>\n");
     echo("    <th>on table</th>\n");
     echo("    <th>on column</th>\n");
+    echo("    <th>on id</th>\n");
     echo("    <th>old value</th>\n");
     echo("    <th>new value</th>\n");
     echo("    <th>user</th>\n");

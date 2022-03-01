@@ -17,10 +17,6 @@ include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
     case 'GET':
-        if(isset($_GET["per_id"]))
-        {
-            $_GET["pl_interrupt.per_id"] = $_GET["per_id"];
-        }
         if(isset($_GET["per_in_id"]))
         {
             $_GET["pl_interrupt.per_in_id"] = $_GET["per_in_id"];
@@ -38,8 +34,10 @@ switch ($req_type) {
         "entryId" => "name",
         "table" => "p_interrupt",
         "columns" => array( "description", "number" ),
-        "link_id" => "per_id",
-        "lookup" => "INSERT INTO pl_interrupt (per_in_id, irq_id) VALUES (?, ?)"
+        "link_id" => "per_in_id",
+        "lookup_table" => "pl_interrupt",
+        "lookup_reference" => "per_in_id",
+        "lookup_added_id" => "irq_id",
         );
         handle_post($pdo, $opts);
         break;

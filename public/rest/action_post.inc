@@ -44,16 +44,45 @@ function handle_post($pdo, $opts)
             $statement = $pdo->prepare($sql);
             $statement->execute();
             $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-            if(isset($opts["lookup"]))
+            if(isset($opts["lookup_table"]))
             {
                 $new_id = $data[0]["LAST_INSERT_ID()"];
-                $ref_id = $_GET[$opts["link_id"]];
-                $sql = $opts["lookup"];
-                $statement = $pdo->prepare($sql);
+                if(isset($opts["link_id"]))
+                {
+                    if(isset($_GET[$opts["link_id"]]))
+                    {
+                        $ref_id = $_GET[$opts["link_id"]];
 
-                $statement->execute(array($ref_id, $new_id));
-                $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-                echo(json_encode($data));
+                        // log what we will do
+                        $sql = "INSERT INTO p_log (action, on_table, on_column, new_value, user)"
+                            . ' VALUES ("INSERT", "' . $opts["lookup_table"] . '", ?, ?, ?)';
+                        $statement = $pdo->prepare($sql);
+
+                        $statement->execute(array($opts["lookup_reference"], $ref_id, $user_data["name"]));
+                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+                        $statement->execute(array($opts["lookup_added_id"], $new_id, $user_data["name"]));
+                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+                        // create lookup entry
+                        $sql = "INSERT INTO " . $opts["lookup_table"] . " ( " . $opts["lookup_reference"] . ", " . $opts["lookup_added_id"] . " ) VALUES ( ?, ? )";
+                        $statement = $pdo->prepare($sql);
+
+                        $statement->execute(array($ref_id, $new_id));
+                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                        echo(json_encode($data));
+                    }
+                    else
+                    {
+                        header('HTTP/1.0 400 Bad Request');
+                        header('X-Debug: no link_id in GET');
+                    }
+                }
+                else
+                {
+                    header('HTTP/1.0 500 Internal Server Error');
+                    header('X-Debug: no link_id set');
+                }
             }
             else
             {
