@@ -33,6 +33,10 @@ switch ($req_type) {
         "entryId" => "name",
         "table" => "p_enumeration",
         "columns" => array( "usage_right" ),
+        "link_id" => "field_id",
+        "lookup_table" => "pl_enumeration",
+        "lookup_reference" => "field_id",
+        "lookup_added_id" => "enum_id",
         );
         handle_post($pdo, $opts);
         break;

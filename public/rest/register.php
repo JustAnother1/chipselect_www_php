@@ -39,6 +39,10 @@ switch ($req_type) {
         "entryId" => "name",
         "table" => "p_register",
         "columns" => array( "display_name", "description", "address_offset", "size", "access, reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type" ),
+        "link_id" => "per_id",
+        "lookup_table" => "pl_register",
+        "lookup_reference" => "per_id",
+        "lookup_added_id" => "reg_id",
         );
         handle_post($pdo, $opts);
         break;

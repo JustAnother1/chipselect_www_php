@@ -33,6 +33,10 @@ switch ($req_type) {
         "entryId" => "name",
         "table" => "p_field",
         "columns" => array( "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action", "reset_value" ),
+        "link_id" => "reg_id",
+        "lookup_table" => "pl_field",
+        "lookup_reference" => "reg_id",
+        "lookup_added_id" => "field_id",
         );
         handle_post($pdo, $opts);
         break;

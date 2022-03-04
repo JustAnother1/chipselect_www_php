@@ -35,6 +35,10 @@ switch ($req_type) {
         "entryId" => "address_offset",
         "table" => "p_address_block",
         "columns" => array( "size", "mem_usage", "protection" ),
+        "link_id" => "per_id",
+        "lookup_table" => "pl_address_block",
+        "lookup_reference" => "per_id",
+        "lookup_added_id" => "addr_id",
         );
         handle_post($pdo, $opts);
         break;
