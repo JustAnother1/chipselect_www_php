@@ -91,7 +91,7 @@ function handle_put($pdo, $opts)
         catch (PDOException $e)
         {
             header("X-debug: exception -> can not update : " . $sql);
-            header("X-EXCEPTION: " . $e);
+            header("X-EXCEPTION: " . $e->getMessage());
             header('HTTP/1.0 500 Internal Server Error');
         }
     }
