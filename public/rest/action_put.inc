@@ -24,68 +24,89 @@ function handle_put($pdo, $opts)
             $statement = $pdo->prepare($opts["sql"]);
             $statement->execute();
             $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-            $data = $data[0];
-            if(isset($data['id']))
+            if(0 != count($data))
             {
-                $changed = false;
-                $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, old_value, new_value, user)"
-                    . ' VALUES ("UPDATE", "' . $opts["table"] . '", ' . $data['id']. ', ?, ?, ?, ?)';
-                $statement = $pdo->prepare($sql);
-
-                $columns = $opts["columns"];
-                $updateSql = "UPDATE " . $opts["table"];
-
-
-                for($columnIdx = 0; $columnIdx < count($columns); $columnIdx++)
+                $data = $data[0];
+                if(isset($data['id']))
                 {
-                    $curCol = $columns[$columnIdx];
-                    if(isset($_GET[$curCol]))
+                    $changed = false;
+                    $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, old_value, new_value, user)"
+                        . ' VALUES ("UPDATE", "' . $opts["table"] . '", ' . $data['id']. ', ?, ?, ?, ?)';
+                    $statement = $pdo->prepare($sql);
+
+                    $columns = $opts["columns"];
+                    $updateSql = "UPDATE " . $opts["table"];
+
+                    for($columnIdx = 0; $columnIdx < count($columns); $columnIdx++)
                     {
-                        $val = sanitize_string($_GET[$curCol]);
-                        if($val != $data[$curCol])
+                        $curCol = $columns[$columnIdx];
+                        if(isset($_GET[$curCol]))
                         {
-                            // log the change
-                            $statement->execute(array($curCol, $data[$curCol], $val, $user_data["name"]));
-                            $statement->fetchAll(PDO::FETCH_ASSOC);
-                            // extend the update sql
-                            if(False == $changed)
+                            $val = sanitize_string($_GET[$curCol]);
+                            $identical = True;
+                            if(in_array($curCol, $opts["int_columns"]))
                             {
-                                $updateSql = $updateSql . " SET " . $curCol . " = '" . $val . "'";
+                                if(intval($val) != intval($data[$curCol]))
+                                {
+                                    $identical = False;
+                                }
+                                // else $identical = True;
                             }
-                            else
+                            else if($val != $data[$curCol])
                             {
-                                $updateSql = $updateSql . ", " . $curCol . " = '" . $val . "'";
+                                $identical = False;
                             }
-                            $data[$curCol] = $val;
-                            $changed = True;
+                            // else $identical = True;
+                            if (False == $identical)
+                            {
+                                // log the change
+                                $statement->execute(array($curCol, $data[$curCol], $val, $user_data["name"]));
+                                $statement->fetchAll(PDO::FETCH_ASSOC);
+                                // extend the update sql
+                                if(False == $changed)
+                                {
+                                    $updateSql = $updateSql . " SET " . $curCol . " = '" . $val . "'";
+                                }
+                                else
+                                {
+                                    $updateSql = $updateSql . ", " . $curCol . " = '" . $val . "'";
+                                }
+                                $data[$curCol] = $val;
+                                $changed = True;
+                            }
                         }
                     }
-                }
 
-                if(True == $changed)
-                {
-                    // echo("now updating");
-                    $updateSql = $updateSql . " WHERE id = " . $data['id'];
-                    header('X-SQL: ' . $updateSql);
-                    $sql = $updateSql;
-                    $statement = $pdo->prepare($sql);
-                    $statement->execute();
-                    $statement->fetchAll(PDO::FETCH_ASSOC);
+                    if(True == $changed)
+                    {
+                        // echo("now updating");
+                        $updateSql = $updateSql . " WHERE id = " . $data['id'];
+                        header('X-SQL: ' . $updateSql);
+                        $sql = $updateSql;
+                        $statement = $pdo->prepare($sql);
+                        $statement->execute();
+                        $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                    echo(json_encode(array($data)));
+                        echo(json_encode(array($data)));
+                    }
+                    else
+                    {
+                        // no change
+                        header("X-debug: no change");
+                        header('HTTP/1.0 400 Bad Request');
+                    }
                 }
                 else
                 {
-                    // no change
-                    header("X-debug: no change");
+                    // no such item -> can not update
+                    header("X-debug: no such item -> can not update : " . $sql);
                     header('HTTP/1.0 400 Bad Request');
                 }
             }
             else
             {
-                // no such item -> can not update
-                header("X-debug: no such item -> can not update : " . $sql);
-                header('HTTP/1.0 400 Bad Request');
+                header("X-debug: read old value -> no data : " . $opts["sql"]);
+                header('HTTP/1.0 500 Internal Server Error');
             }
         }
         catch (PDOException $e)

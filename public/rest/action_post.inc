@@ -75,13 +75,13 @@ function handle_post($pdo, $opts)
                     else
                     {
                         header('HTTP/1.0 400 Bad Request');
-                        header('X-Debug: no link_id in GET');
+                        header('X-debug: no link_id in GET');
                     }
                 }
                 else
                 {
                     header('HTTP/1.0 500 Internal Server Error');
-                    header('X-Debug: no link_id set');
+                    header('X-debug: no link_id set');
                 }
             }
             else
@@ -94,7 +94,7 @@ function handle_post($pdo, $opts)
         }
         catch (PDOException $e)
         {
-            header('X-Debug: ' . $e->getMessage());
+            header('X-debug: ' . $e->getMessage());
             header('HTTP/1.0 500 Internal Server Error');
         }
     }
