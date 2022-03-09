@@ -44,19 +44,44 @@ function handle_put($pdo, $opts)
                         {
                             $val = sanitize_string($_GET[$curCol]);
                             $identical = True;
-                            if(in_array($curCol, $opts["int_columns"]))
+                            if(isset($opts['int_columns']))
                             {
-                                if(intval($val) != intval($data[$curCol]))
+                                if(in_array($curCol, $opts["int_columns"]))
+                                {
+                                    if((str_starts_with($val, '0x')) || (str_starts_with($val, '0X')))
+                                    {
+                                        if(intval($val, 16) != intval($data[$curCol]))
+                                        {
+                                            $val = intval($val, 16);
+                                            $identical = False;
+                                        }
+                                        // else $identical = True;
+                                    }
+                                    else
+                                    {
+                                        if(intval($val) != intval($data[$curCol]))
+                                        {
+                                            $val = intval($val);
+                                            $identical = False;
+                                        }
+                                        // else $identical = True;
+                                    }
+                                }
+                                else if($val != $data[$curCol])
                                 {
                                     $identical = False;
                                 }
                                 // else $identical = True;
                             }
-                            else if($val != $data[$curCol])
+                            else
                             {
-                                $identical = False;
+                                if($val != $data[$curCol])
+                                {
+                                    $identical = False;
+                                }
+                                // else $identical = True;
                             }
-                            // else $identical = True;
+
                             if (False == $identical)
                             {
                                 // log the change

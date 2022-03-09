@@ -47,6 +47,7 @@ switch ($req_type) {
         "sql" => "SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, reset_value FROM p_field",
         "table" => "p_field",
         "columns" => array( "name", "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action", "reset_value" ),
+        "int_columns" => array( "bit_offset", "size_bit", "reset_value" ),
         );
         handle_put($pdo, $opts);
         break;
