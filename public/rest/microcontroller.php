@@ -55,7 +55,7 @@ switch ($req_type) {
         "table" => "microcontroller",
         "columns" => array( "name", "CPU_clock_max_MHz", "Flash_size_kB", "RAM_size_kB", "Supply_Voltage_min_V",
         "Supply_Voltage_max_V", "Operating_Temperature_min_degC", "Operating_Temperature_max_degC", "svd_id",
-        "Addressable_unit_bit", "bus_width_bit", "description, architecture_id", "market_state_id", "package_id", "vendor_id" ),
+        "Addressable_unit_bit", "bus_width_bit", "description", "architecture_id", "market_state_id", "package_id", "vendor_id" ),
         );
         handle_put($pdo, $opts);
         break;
@@ -74,7 +74,7 @@ switch ($req_type) {
         "table" => "microcontroller",
         "columns" => array( "name", "CPU_clock_max_MHz", "Flash_size_kB", "RAM_size_kB", "Supply_Voltage_min_V",
         "Supply_Voltage_max_V", "Operating_Temperature_min_degC", "Operating_Temperature_max_degC", "svd_id",
-        "Addressable_unit_bit", "bus_width_bit", "description, architecture_id", "market_state_id", "package_id", "vendor_id" ),
+        "Addressable_unit_bit", "bus_width_bit", "description", "architecture_id", "market_state_id", "package_id", "vendor_id" ),
         );
         handle_delete($pdo, $opts);
         break;
