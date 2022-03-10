@@ -16,7 +16,7 @@ $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_pa
 switch ($req_type) {
     case 'GET':
         $opts = array(
-        "sql" => "SELECT id, name, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick FROM p_architecture",
+        "sql" => "SELECT id, name, alternative, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick FROM p_architecture",
         "filters" => array( "id", "name", "svd_name" ),
         "allowUnfiltered" => true,
         );
@@ -27,7 +27,7 @@ switch ($req_type) {
         $opts = array(
         "entryId" => "name",
         "table" => "p_architecture",
-        "columns" => array( "svd_name", "revision", "endian", "hasMPU", "hasFPU", "interrupt_prio_bits", "ARM_Vendor_systick" ),
+        "columns" => array( "alternative", "svd_name", "revision", "endian", "hasMPU", "hasFPU", "interrupt_prio_bits", "ARM_Vendor_systick" ),
         );
         handle_post($pdo, $opts);
         break;
@@ -37,7 +37,7 @@ switch ($req_type) {
         "filters" => array( "id", "name" ),
         "sql" => "SELECT id, name, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick FROM p_architecture",
         "table" => "p_architecture",
-        "columns" => array( "name", "svd_name", "revision", "endian", "hasMPU", "hasFPU", "interrupt_prio_bits", "ARM_Vendor_systick" ),
+        "columns" => array( "name", "alternative", "svd_name", "revision", "endian", "hasMPU", "hasFPU", "interrupt_prio_bits", "ARM_Vendor_systick" ),
         );
         handle_put($pdo, $opts);
         break;

@@ -75,7 +75,7 @@ function handle_post($pdo, $opts)
                     else
                     {
                         header('HTTP/1.0 400 Bad Request');
-                        header('X-debug: no link_id in GET');
+                        header('X-debug: no link_id in GET parameter');
                     }
                 }
                 else
@@ -102,6 +102,7 @@ function handle_post($pdo, $opts)
     {
         // no item id specified
         header('HTTP/1.0 400 Bad Request');
+        header('X-debug: no entryId in GET parameter');
     }
 }
 
