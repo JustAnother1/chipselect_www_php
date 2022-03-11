@@ -33,7 +33,7 @@ switch ($req_type) {
     case 'POST':
         $opts = array(
         "entryId" => "name",
-        "table" => "p_peripheral",
+        "table" => "p_peripheral_instance",
         "columns" => array( "description", "base_address", "peripheral_id", "disable_Condition" ),
         "link_id" => "dev_id",
         "lookup_table" => "pl_peripheral_instance",
@@ -47,7 +47,7 @@ switch ($req_type) {
         $opts = array(
         "filters" => array( "id" ),
         "sql" => "SELECT id, name, description, base_address, peripheral_id, disable_Condition FROM p_peripheral",
-        "table" => "p_peripheral",
+        "table" => "p_peripheral_instance",
         "columns" => array( "name", "description", "base_address", "peripheral_id", "disable_Condition"),
         );
         handle_put($pdo, $opts);
@@ -57,7 +57,7 @@ switch ($req_type) {
         $opts = array(
         "filters" => array( "id", "group_name" ),
         "sql" => "SELECT id, name, description, base_address, peripheral_id, disable_Condition FROM p_peripherall",
-        "table" => "p_peripheral",
+        "table" => "p_peripheral_instance",
         "columns" => array( "name", "description", "base_address", "peripheral_id", "disable_Condition" ),
         );
         handle_delete($pdo, $opts);

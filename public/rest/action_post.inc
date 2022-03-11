@@ -70,12 +70,16 @@ function handle_post($pdo, $opts)
 
                         $statement->execute(array($ref_id, $new_id));
                         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-                        echo(json_encode($data));
+
+                        $array = array(
+                            "id" => $new_id,
+                        );
+                        echo(json_encode(array($array)));
                     }
                     else
                     {
                         header('HTTP/1.0 400 Bad Request');
-                        header('X-debug: no link_id in GET parameter');
+                        header('X-debug: no ' . $opts["link_id"] . ' value in GET parameter');
                     }
                 }
                 else
@@ -102,7 +106,7 @@ function handle_post($pdo, $opts)
     {
         // no item id specified
         header('HTTP/1.0 400 Bad Request');
-        header('X-debug: no entryId in GET parameter');
+        header('X-debug: no ' . $entryId . ' value in GET parameter');
     }
 }
 
