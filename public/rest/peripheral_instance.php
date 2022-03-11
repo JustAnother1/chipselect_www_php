@@ -46,7 +46,7 @@ switch ($req_type) {
     case 'PUT':
         $opts = array(
         "filters" => array( "id" ),
-        "sql" => "SELECT id, name, description, base_address, peripheral_id, disable_Condition FROM p_peripheral",
+        "sql" => "SELECT id, name, description, base_address, peripheral_id, disable_Condition FROM p_peripheral_instance",
         "table" => "p_peripheral_instance",
         "columns" => array( "name", "description", "base_address", "peripheral_id", "disable_Condition"),
         );

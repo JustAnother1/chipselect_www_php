@@ -19,6 +19,7 @@ function handle_put($pdo, $opts)
     }
     if(true == $found)
     {
+        $sql = "not set";
         try
         {
             $statement = $pdo->prepare($opts["sql"]);
