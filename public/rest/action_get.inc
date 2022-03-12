@@ -59,19 +59,26 @@ function handle_get($pdo, $opts)
                     foreach($data as &$per) // the & before $per makes the changes to the content apply to $data
                     {
                         $val = $per[$toHexCol[$hexIdx]];
-                        if (str_starts_with($val, '0x'))
+                        if(true == is_null($val))
                         {
-                            // already hex
-                        }
-                        else if (str_starts_with($val, '0X'))
-                        {
-                            // also already hex
+                            $per[$toHexCol[$hexIdx]] = '0x0';
                         }
                         else
                         {
-                            // convert decimal value to hex
-                            $val = "0x" . dechex($val);
-                            $per[$toHexCol[$hexIdx]] = $val;
+                            if (str_starts_with($val, '0x'))
+                            {
+                                // already hex
+                            }
+                            else if (str_starts_with($val, '0X'))
+                            {
+                                // also already hex
+                            }
+                            else
+                            {
+                                // convert decimal value to hex
+                                $val = "0x" . dechex($val);
+                                $per[$toHexCol[$hexIdx]] = $val;
+                            }
                         }
                     }
                 }
