@@ -79,7 +79,7 @@ function handle_post($pdo, $opts)
                     else
                     {
                         header('HTTP/1.0 400 Bad Request');
-                        header('X-debug: no ' . $opts["link_id"] . ' value in GET parameter');
+                        header('X-debug: no link_id(' . $opts["link_id"] . ') value in GET parameter');
                     }
                 }
                 else
@@ -106,7 +106,7 @@ function handle_post($pdo, $opts)
     {
         // no item id specified
         header('HTTP/1.0 400 Bad Request');
-        header('X-debug: no ' . $entryId . ' value in GET parameter');
+        header('X-debug: no entryId(' . $entryId . ') value in GET parameter');
     }
 }
 

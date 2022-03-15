@@ -38,6 +38,10 @@ switch ($req_type) {
         "lookup_reference" => "field_id",
         "lookup_added_id" => "enum_id",
         );
+        if(!isset($_GET["name"]))
+        {
+            $_GET["name"] = "NULL";
+        }
         handle_post($pdo, $opts);
         break;
 
