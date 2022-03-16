@@ -79,13 +79,17 @@ function print_enums($dbh, $field_id) {
     foreach ($stmt as $row) {
         echo("    <p> Enumeration: ");
         if(NULL != $row['name']) {
-            if('None' != $row['name']) {
-                echo($row['name']);
+            if('NULL' != $row['name']) {
+                if('None' != $row['name']) {
+                    echo($row['name']);
+                }
             }
         }
         if(NULL != $row['usage_right']) {
-            if('None' != $row['usage_right']) {
-                echo(" ( " . $row['usage_right'] . " )");
+            if('NULL' != $row['usage_right']) {
+                if('None' != $row['usage_right']) {
+                    echo(" ( " . $row['usage_right'] . " )");
+                }
             }
         }
         echo("<br />\n</p>\n");
