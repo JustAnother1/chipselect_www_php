@@ -33,7 +33,7 @@ function handle_post($pdo, $opts)
                 }
             }
 
-            $sql = "INSERT INTO " . $opts["table"] . " (" . implode(", ", $fields) . ") VALUES ('" . implode("', '", $values) . "')";
+            $sql = "INSERT INTO " . $opts["table"] . " (" . implode(", ", $fields) . ') VALUES ("' . implode('", "', $values) . '")';
             header('X-SQL: ' . $sql);
             $statement = $pdo->prepare($sql);
             $statement->execute();

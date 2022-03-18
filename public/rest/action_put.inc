@@ -44,6 +44,7 @@ function handle_put($pdo, $opts)
                         if(isset($_GET[$curCol]))
                         {
                             $val = sanitize_string($_GET[$curCol]);
+                            header('X-change_col_' . $curCol .': ' . $val . ' -> ' . $data[$curCol]);
                             $identical = True;
                             if(isset($opts['int_columns']))
                             {
@@ -91,11 +92,11 @@ function handle_put($pdo, $opts)
                                 // extend the update sql
                                 if(False == $changed)
                                 {
-                                    $updateSql = $updateSql . " SET " . $curCol . " = '" . $val . "'";
+                                    $updateSql = $updateSql . " SET " . $curCol . ' = "' . $val . '"';
                                 }
                                 else
                                 {
-                                    $updateSql = $updateSql . ", " . $curCol . " = '" . $val . "'";
+                                    $updateSql = $updateSql . ", " . $curCol . ' = "' . $val . '"';
                                 }
                                 $data[$curCol] = $val;
                                 $changed = True;
