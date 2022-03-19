@@ -290,7 +290,14 @@ foreach ($stmt as $row) {
     echo("    base address : 0x" . dechex(intval($row['base_address'])) . "<br />\n");
     $irq_stmt->execute(array($row['per_in_id']));
     foreach ($irq_stmt as $irq_row) {
-        echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . " : " . $irq_row['description'] . "<br />\n");
+        if(NULL == $irq_row['description'])
+        {
+            echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . "<br />\n");
+        }
+        else
+        {
+            echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . " : " . $irq_row['description'] . "<br />\n");
+        }
     }
     echo("</p>\n");
 }

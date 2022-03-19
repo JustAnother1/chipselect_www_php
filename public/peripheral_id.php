@@ -211,7 +211,10 @@ foreach ($stmt as $row) {
     {
         echo("    size : " . $row['size'] . " bit<br />\n");
     }
-    echo("    access : " . $row['access'] . "<br />\n");
+    if(NULL != $row['access'])
+    {
+        echo("    access : " . $row['access'] . "<br />\n");
+    }
     echo("    reset_value : 0x" . dechex(intval($row['reset_value'])) . "<br />\n");
     if(NULL != $row['alternate_register']) {
         if("None" != $row['alternate_register']) {
