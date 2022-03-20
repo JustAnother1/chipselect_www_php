@@ -25,7 +25,7 @@ switch ($req_type) {
             $_GET["pl_register.per_id"] = $_GET["per_id"];
         }
         $opts = array(
-        "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type"
+        "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type, alternate_group"
               . " FROM p_register INNER JOIN pl_register ON (pl_register.reg_id = p_register.id)",
         "filters" => array( "pl_register.per_id" ),
         "allowUnfiltered" => false,
@@ -38,7 +38,7 @@ switch ($req_type) {
         $opts = array(
         "entryId" => "name",
         "table" => "p_register",
-        "columns" => array( "display_name", "description", "address_offset", "size", "access, reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type" ),
+        "columns" => array( "display_name", "description", "address_offset", "size", "access, reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type", "alternate_group" ),
         "link_id" => "per_id",
         "lookup_table" => "pl_register",
         "lookup_reference" => "per_id",
@@ -50,9 +50,9 @@ switch ($req_type) {
     case 'PUT':
         $opts = array(
         "filters" => array( "id" ),
-        "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type FROM p_register",
+        "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type, alternate_group FROM p_register",
         "table" => "p_register",
-        "columns" => array( "name", "display_name", "description", "address_offset", "size", "access", "reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type" ),
+        "columns" => array( "name", "display_name", "description", "address_offset", "size", "access", "reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type", "alternate_group" ),
         "int_columns" => array( "address_offset", "size", "reset_value", "reset_mask" ),
         );
         handle_put($pdo, $opts);
@@ -61,9 +61,9 @@ switch ($req_type) {
     case 'DELETE':
         $opts = array(
         "filters" => array( "id"),
-        "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type FROM p_register",
+        "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type, alternate_group FROM p_register",
         "table" => "p_register",
-        "columns" => array( "name", "display_name", "description", "address_offset", "size", "access, reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type" ),
+        "columns" => array( "name", "display_name", "description", "address_offset", "size", "access, reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type", "alternate_group" ),
         );
         handle_delete($pdo, $opts);
         break;
