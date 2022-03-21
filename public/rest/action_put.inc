@@ -44,7 +44,7 @@ function handle_put($pdo, $opts)
                         if(isset($_GET[$curCol]))
                         {
                             $val = sanitize_string($_GET[$curCol]);
-                            header('X-change_col_' . $curCol .': ' . $val . ' -> ' . $data[$curCol]);
+                            header('X-change_col_' . $curCol .': ' . $val . ' -> ' . sanitize_string($data[$curCol]));
                             $identical = True;
                             if(isset($opts['int_columns']))
                             {
