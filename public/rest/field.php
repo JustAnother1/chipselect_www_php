@@ -20,7 +20,7 @@ switch ($req_type) {
             $_GET["pl_field.reg_id"] = $_GET["reg_id"];
         }
         $opts = array(
-        "sql" => "SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, reset_value"
+        "sql" => "SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action"
               . " FROM p_field INNER JOIN pl_field ON (pl_field.field_id = p_field.id)",
         "filters" => array( "pl_field.reg_id" ),
         "allowUnfiltered" => false,
@@ -32,7 +32,7 @@ switch ($req_type) {
         $opts = array(
         "entryId" => "name",
         "table" => "p_field",
-        "columns" => array( "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action", "reset_value" ),
+        "columns" => array( "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action"),
         "link_id" => "reg_id",
         "lookup_table" => "pl_field",
         "lookup_reference" => "reg_id",
@@ -44,9 +44,9 @@ switch ($req_type) {
     case 'PUT':
         $opts = array(
         "filters" => array( "id" ),
-        "sql" => "SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, reset_value FROM p_field",
+        "sql" => "SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action FROM p_field",
         "table" => "p_field",
-        "columns" => array( "name", "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action", "reset_value" ),
+        "columns" => array( "name", "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action"),
         "int_columns" => array( "bit_offset", "size_bit", "reset_value" ),
         );
         handle_put($pdo, $opts);
@@ -57,7 +57,7 @@ switch ($req_type) {
         "filters" => array( "id"),
         "sql" => "SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, reset_value FROM p_field",
         "table" => "p_field",
-        "columns" => array( "name", "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action", "reset_value" ),
+        "columns" => array( "name", "description", "bit_offset", "size_bit", "access", "modified_write_values", "read_action"),
         );
         handle_delete($pdo, $opts);
         break;
