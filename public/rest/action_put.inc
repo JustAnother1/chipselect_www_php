@@ -1,5 +1,17 @@
 <?php
 
+function makeDecimal($val)
+{
+    if((str_starts_with($val, '0x')) || (str_starts_with($val, '0X')))
+    {
+        return intval($val, 16);
+    }
+    else
+    {
+        return intval($val);
+    }
+}
+
 function handle_put($pdo, $opts)
 {
     $user_data = authenticate($pdo);
@@ -44,36 +56,25 @@ function handle_put($pdo, $opts)
                         if(isset($_GET[$curCol]))
                         {
                             $val = sanitize_string($_GET[$curCol]);
-                            header('X-change_col_' . $curCol .': ' . $val . ' -> ' . sanitize_string($data[$curCol]));
+                            header('X-change_col_' . $curCol .': ' . sanitize_string($data[$curCol]) . ' -> ' . $val );
                             $identical = True;
                             if(isset($opts['int_columns']))
                             {
                                 if(in_array($curCol, $opts["int_columns"]))
                                 {
-                                    if((str_starts_with($val, '0x')) || (str_starts_with($val, '0X')))
+                                    $int_is = makeDecimal($data[$curCol]);
+                                    $int_should = makeDecimal($val);
+                                    if($int_is != $int_should)
                                     {
-                                        if(intval($val, 16) != intval($data[$curCol]))
-                                        {
-                                            $val = intval($val, 16);
-                                            $identical = False;
-                                        }
-                                        // else $identical = True;
+                                        $identical = False;
                                     }
-                                    else
-                                    {
-                                        if(intval($val) != intval($data[$curCol]))
-                                        {
-                                            $val = intval($val);
-                                            $identical = False;
-                                        }
-                                        // else $identical = True;
-                                    }
+                                    // else identical
                                 }
                                 else if($val != $data[$curCol])
                                 {
                                     $identical = False;
                                 }
-                                // else $identical = True;
+                                // else identical
                             }
                             else
                             {
@@ -81,7 +82,7 @@ function handle_put($pdo, $opts)
                                 {
                                     $identical = False;
                                 }
-                                // else $identical = True;
+                                // else identical
                             }
 
                             if (False == $identical)
