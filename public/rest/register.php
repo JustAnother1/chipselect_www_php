@@ -53,7 +53,7 @@ switch ($req_type) {
         "sql" => "SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type, alternate_group FROM p_register",
         "table" => "p_register",
         "columns" => array( "name", "display_name", "description", "address_offset", "size", "access", "reset_value", "alternate_register", "reset_mask", "read_action", "modified_write_values", "data_type", "alternate_group" ),
-        "int_columns" => array( "address_offset", "size", "reset_value", "reset_mask" ),
+        "int_columns" => array( "size" ),
         );
         handle_put($pdo, $opts);
         break;
