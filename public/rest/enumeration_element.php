@@ -65,4 +65,6 @@ switch ($req_type) {
         header('HTTP/1.0 501 Not Implemented');
         break;
 } // end of switch
+
+$pdo = null;
 ?>
