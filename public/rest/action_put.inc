@@ -2,7 +2,11 @@
 
 function makeDecimal($val)
 {
-    if((str_starts_with($val, '0x')) || (str_starts_with($val, '0X')))
+    if(null == $val)
+    {
+        return 0;
+    }
+    else if((str_starts_with($val, '0x')) || (str_starts_with($val, '0X')))
     {
         return intval($val, 16);
     }
