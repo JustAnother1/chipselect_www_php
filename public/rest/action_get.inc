@@ -76,7 +76,7 @@ function handle_get($pdo, $opts)
                             else
                             {
                                 // convert decimal value to hex
-                                $val = "0x" . dechex($val);
+                                $val = "0x" . dechex(intval($val));
                                 $per[$toHexCol[$hexIdx]] = $val;
                             }
                         }
