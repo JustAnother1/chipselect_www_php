@@ -56,7 +56,7 @@ else
     <br />
     <input type=submit name=submit value="login">
     </form>
-    <p>If you want to register an account send an email to <a href="mailto:kontakt@ing-poetter.de">kontakt@ing-poetter.de</a></p>
+    <p>If you want to register an account send an email to <a href="mailto:info@chipselect.org">info@chipselect.org</a></p>
     <?php
 }
 
