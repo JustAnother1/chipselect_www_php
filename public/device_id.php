@@ -27,7 +27,7 @@ if(isset($_GET['id']))
 
     $sql = 'SELECT name, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V'
          . ', Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id'
-         . ', description, architecture_id, market_state_id, package_id, vendor_id'
+         . ', description, architecture_id, market_state_id, package_id, vendor_id, RAM_size_byte, RAM_start_address'
         . ' FROM microcontroller '
         . ' WHERE id = ?';
 
@@ -90,8 +90,28 @@ if(isset($_GET['id']))
     if( NULL != $device_data['Flash_size_kB']) {
         echo("    <p>Flash : " . $device_data['Flash_size_kB'] . " kB</p>\n");
     }
+    // Flash Banks
+    $sql = 'SELECT size, start_address'
+         . ' FROM p_flash_bank INNER JOIN  pl_flash_bank ON  pl_flash_bank.flash_id  = p_flash_bank.id'
+         . ' WHERE pl_flash_bank.dev_id = ?'
+         . ' ORDER BY start_address';
+    $stmt = $dbh->prepare($sql);
+
+    $stmt->execute(array($device_data['id']));
+    foreach ($stmt as $row) {
+        echo("    <p>Flash bank : " . $row['size'] . " Bytes @ " .  $row['start_address'] . "</p>\n");
+    }
+
     if( NULL != $device_data['RAM_size_kB']) {
         echo("    <p>RAM : " . $device_data['RAM_size_kB'] . " kB</p>\n");
+    }
+    if( NULL != $device_data['RAM_size_byte']) {
+        if( NULL != $device_data['RAM_start_address']) {
+            echo("    <p>RAM : " . $device_data['RAM_size_byte'] . " Bytes @ " . $device_data['RAM_start_address'] . "</p>\n");
+        }
+        else{
+            echo("    <p>RAM : " . $device_data['RAM_size_byte'] . " Bytes</p>\n");
+        }
     }
     if( NULL != $device_data['Supply_Voltage_min_V']) {
         echo("    <p>V<sub>cc</sub> min : " . $device_data['Supply_Voltage_min_V'] . " V</p>\n");
