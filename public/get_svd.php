@@ -156,7 +156,7 @@ function print_enumeration_element($xml_prefix, $xml_indent_step, $dbh, $enum_id
 function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
     echo($xml_prefix . "<fields>\n");
     $field_indent = $xml_prefix . $xml_indent_step;
-    $sql = 'SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, reset_value'
+    $sql = 'SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action'
         . ' FROM p_field  INNER JOIN  pl_field  ON  pl_field.field_id  = p_field.id'
         . ' WHERE pl_field.reg_id = ?'
         . ' ORDER BY name';
@@ -379,6 +379,6 @@ echo($xml_prefix . "<description>" . $device['description'] . "</description>\n"
 print_cpu_element($xml_prefix, $xml_indent_step, $dbh, $device['architecture_id']);
 echo($xml_prefix . "<addressUnitBits>" . $device['Addressable_unit_bit'] . "</addressUnitBits>\n");
 echo($xml_prefix. "<width>" . $device['bus_width_bit'] . "</width>\n");
-print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device['id']);
+print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device['svd_id']);
 echo("</device>\n");
 ?>
