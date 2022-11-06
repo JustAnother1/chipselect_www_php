@@ -18,6 +18,12 @@ function handle_delete($pdo, $opts)
                 $found = true;
                 break;
             }
+            if(isset($_POST[$filters[$filterIdx]]))
+            {
+                $opts["sql"] = $opts["sql"] . " WHERE " . $filters[$filterIdx] . " = \"" . $_POST[$filters[$filterIdx]] . "\"";
+                $found = true;
+                break;
+            }
         }
         if(true == $found)
         {

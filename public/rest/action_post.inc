@@ -4,7 +4,17 @@ function handle_post($pdo, $opts)
 {
     $user_data = authenticate($pdo);
     $entryId = $opts["entryId"];
+
     if(isset($_GET[$entryId]))
+    {
+        $data_EntryId = $_GET[$entryId];
+    }
+    else if(isset($_POST[$entryId]))
+    {
+        $data_EntryId = $_POST[$entryId];
+    }
+
+    if(isset($data_EntryId))
     {
         try
         {
@@ -12,11 +22,11 @@ function handle_post($pdo, $opts)
                 . ' VALUES ("INSERT", "' . $opts["table"] . '", ?, ?, ?)';
             $statement = $pdo->prepare($sql);
 
-            $statement->execute(array($entryId, sanitize_string($_GET[$entryId]), $user_data["name"]));
+            $statement->execute(array($entryId, sanitize_string($data_EntryId), $user_data["name"]));
             $data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
             $fields = array($entryId);
-            $values = array(sanitize_string($_GET[$entryId]));
+            $values = array(sanitize_string($data_EntryId));
 
             $columns = $opts["columns"];
 
@@ -26,6 +36,14 @@ function handle_post($pdo, $opts)
                 if(isset($_GET[$curCol]))
                 {
                     $val = sanitize_string($_GET[$curCol]);
+                    $statement->execute(array($curCol, $val, $user_data["name"]));
+                    $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                    $fields[] = $curCol;
+                    $values[] = $val;
+                }
+                else if(isset($_POST[$curCol]))
+                {
+                    $val = sanitize_string($_POST[$curCol]);
                     $statement->execute(array($curCol, $val, $user_data["name"]));
                     $data = $statement->fetchAll(PDO::FETCH_ASSOC);
                     $fields[] = $curCol;
@@ -76,6 +94,33 @@ function handle_post($pdo, $opts)
                         );
                         echo(json_encode(array($array)));
                     }
+                    else if(isset($_POST[$opts["link_id"]]))
+                    {
+                        $ref_id = $_POST[$opts["link_id"]];
+
+                        // log what we will do
+                        $sql = "INSERT INTO p_log (action, on_table, on_column, new_value, user)"
+                            . ' VALUES ("INSERT", "' . $opts["lookup_table"] . '", ?, ?, ?)';
+                            $statement = $pdo->prepare($sql);
+
+                            $statement->execute(array($opts["lookup_reference"], $ref_id, $user_data["name"]));
+                            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+                            $statement->execute(array($opts["lookup_added_id"], $new_id, $user_data["name"]));
+                            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+                            // create lookup entry
+                            $sql = "INSERT INTO " . $opts["lookup_table"] . " ( " . $opts["lookup_reference"] . ", " . $opts["lookup_added_id"] . " ) VALUES ( ?, ? )";
+                            $statement = $pdo->prepare($sql);
+
+                            $statement->execute(array($ref_id, $new_id));
+                            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+                            $array = array(
+                                "id" => $new_id,
+                            );
+                            echo(json_encode(array($array)));
+                    }
                     else
                     {
                         header('HTTP/1.0 400 Bad Request');
@@ -106,6 +151,7 @@ function handle_post($pdo, $opts)
     {
         // no item id specified
         header('HTTP/1.0 400 Bad Request');
+        header('X-Action: POST');
         header('X-debug: no entryId(' . $entryId . ') value in GET parameter');
     }
 }

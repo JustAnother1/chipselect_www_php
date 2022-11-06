@@ -14,11 +14,19 @@ function handle_get($pdo, $opts)
             $found = true;
             break;
         }
+        else if(isset($_POST[$filters[$filterIdx]]))
+        {
+            $opts["sql"] = $opts["sql"] . " WHERE " . $filters[$filterIdx] . " = \"" . $_POST[$filters[$filterIdx]] . "\"";
+            $found = true;
+            break;
+        }
     }
 
     if((false == $found) && (false == $opts["allowUnfiltered"]))
     {
         header('HTTP/1.0 400 Bad Request');
+        header('X-Action: GET');
+        header('X-SQL: ' . $opts["sql"]);
     }
     else
     {
@@ -30,9 +38,22 @@ function handle_get($pdo, $opts)
             {
                 $left_off_id = $_GET["left_off_id"];
             }
+            if(isset($_POST["left_off_id"]))
+            {
+                $left_off_id = $_POST["left_off_id"];
+            }
+
             if(isset($_GET["limit"]))
             {
                 $limit = $_GET["limit"];
+                if($limit > $GLOBALS['MAX_LIMIT'])
+                {
+                    $limit = 30;
+                }
+            }
+            if(isset($_POST["limit"]))
+            {
+                $limit = $_POST["limit"];
                 if($limit > $GLOBALS['MAX_LIMIT'])
                 {
                     $limit = 30;

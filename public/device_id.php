@@ -306,7 +306,7 @@ echo("<div id=\"peripheral_instance\">\n");
 echo("<h2>Peripherals</h2>\n");
 foreach ($stmt as $row) {
     echo("    <p>name : <a href=\"peripheral_id.php?id=" . $row['peripheral_id'] . "\">" . $row['name'] . "</a><br />\n");
-    echo("    description : " . $row['description'] . "</a><br />\n");
+    echo("    description : " . nl2br($row['description']) . "</a><br />\n");
     echo("    base address : 0x" . dechex(intval($row['base_address'])) . "<br />\n");
     $irq_stmt->execute(array($row['per_in_id']));
     foreach ($irq_stmt as $irq_row) {

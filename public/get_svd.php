@@ -360,6 +360,10 @@ else if(0 ==  strlen($device['description']))
 {
     $device['description'] = $device['name'];
 }
+if(null == $device['svd_id'])
+{
+    $device['svd_id'] = $device['id'];
+}
 
 // checks done, start outputting the SVD data
 echo("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");

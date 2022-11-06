@@ -62,7 +62,6 @@ switch ($req_type) {
         );
         handle_delete($pdo, $opts);
         break;
-        break;
 
     default:
         header('HTTP/1.0 501 Not Implemented');

@@ -3,8 +3,8 @@ include("start.inc");
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
+<head>
+    <meta charset="utf-8">
 <?php
 include ("../secret.inc");
 include ("svg.inc");
@@ -45,12 +45,12 @@ if(false == $row) {
 }
 $peripheral_data = $row;
 
-echo('<title>' . $peripheral_data['group_name'] . '</title>');
+echo('    <title>' . $peripheral_data['group_name'] . '</title>\n');
         ?>
-        <meta  http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <link rel="stylesheet" type="text/css" href="style.css">
-    </head>
-    <body>
+    <meta  http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
 
 <?php
 
@@ -101,7 +101,7 @@ function print_enums($dbh, $field_id) {
 
 function print_one_field($dbh, $row) {
     echo("    <p>" . $row['name'] . " : " . $row['description'] . "<br />\n");
-    echo("    bits : " . $row['bit_offset'] . " - " . ($row['bit_offset'] + $row['size_bit'] -1) . "<br />\n");
+    echo("    bits : " . $row['bit_offset'] . " - " . ($row['bit_offset'] + $row['size_bit'] -1) . " (" . $row['size_bit'] . " bit)" . "<br />\n");
     if(NULL != $row['access']) {
         echo("    access : " . $row['access'] . "<br />\n");
     }
@@ -163,7 +163,7 @@ foreach ($stmt as $row) {
     } else {
         echo("    protection : " . $row['protection'] . "<br />\n");
     }
-    echo("</p>\n");
+    echo("    </p>\n");
 }
 echo("</div>\n");
 
@@ -180,11 +180,9 @@ echo("<h2>Registers</h2>\n");
 echo("<div id=\"registers_idx\">\n");
 
 foreach ($stmt as $row) {
-    if($row['display_name'] == "")
-    {
+    if($row['display_name'] == "") {
         echo("    <p><a href=\"#" . $row['name'] . "\">" . $row['name'] . "</a></p>\n");
-    }
-    else if($row['name'] != $row['display_name']) {
+    } else if($row['name'] != $row['display_name']) {
         echo("    <p><a href=\"#" . $row['name'] . "\">" . $row['display_name'] . " (" . $row['name'] . ")</a></p>\n");
     } else {
         echo("    <p><a href=\"#" . $row['name'] . "\">" . $row['name'] . "</a></p>\n");
@@ -195,40 +193,47 @@ $stmt = $dbh->prepare($sql);
 $stmt->execute(array($peripheral_id));
 echo("</div>\n");
 foreach ($stmt as $row) {
-    if($row['display_name'] == "")
-    {
+    // name , display_name
+    if($row['display_name'] == "") {
         echo("    <h3 id=\"" . $row['name'] . "\">" . $row['name'] . "</h3>\n");
-    }
-    else if($row['name'] != $row['display_name']) {
+        $row['display_name'] = $row['name'];
+    } else if($row['name'] != $row['display_name']) {
         echo("    <h3 id=\"" . $row['name'] . "\">" . $row['display_name'] . " (" . $row['name'] . ")</h3>\n");
     } else {
         echo("    <h3 id=\"" . $row['name'] . "\">" . $row['name'] . "</h3>\n");
     }
-    echo("<p>\n");
+    echo("    <p>\n");
+    // description
     echo("    " . $row['description'] . "<br />\n");
+    // address_offset
     echo("    address_offset : " . $row['address_offset'] . " Bytes (0x" . dechex(intval($row['address_offset'])) . ")<br />\n");
-    if($row['size'] != "")
-    {
+    // size
+    if($row['size'] != "") {
         echo("    size : " . $row['size'] . " bit<br />\n");
+    } else {
+        echo("<!-- size is not set -->\n");
     }
-    if(NULL != $row['access'])
-    {
+    // access
+    if(NULL != $row['access']) {
         echo("    access : " . $row['access'] . "<br />\n");
     }
+    // reset_value
     echo("    reset_value : 0x" . dechex(intval($row['reset_value'])) . "<br />\n");
+    // alternate_register
     if(NULL != $row['alternate_register']) {
         if("None" != $row['alternate_register']) {
             echo("    alternate_register : " . $row['alternate_register'] . "<br />\n");
         }
     }
+    // reset_mask
     if(NULL != $row['reset_Mask']) {
-        if((32 == $row['size']) && ('ffffffff' != dechex(intval($row['reset_Mask']))))
-        {
+        if((32 == $row['size']) && ('ffffffff' == dechex(intval($row['reset_Mask'])))) {
+            // Reset Mask of 0xffffffff just means all the pins are reset on reset. Duh! The mask is only interesting if not all bits are affected.
+        } else {
             echo("    reset_Mask : 0x" . dechex(intval($row['reset_Mask'])) . "<br />\n");
         }
-        // Reset Mask of 0xffffffff just means all the pins are reset on reset. Duh! The mask is only interesting if not all bits are affected.
     }
-    echo("</p>\n");
+    echo("    </p>\n");
     print_fields($dbh, $row['display_name'],  $row['id'], $row['size'], $row['access'], $row['reset_value']);
     echo("<br />\n");
 }
