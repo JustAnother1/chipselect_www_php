@@ -9,15 +9,15 @@ include("action_post.inc");
 include("action_put.inc");
 include("action_delete.inc");
 
-$req_type = $_SERVER['REQUEST_METHOD'];
+$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
     case 'GET':
-        if(isset($_GET["field_id"]))
+        if(isset($_POST["field_id"]))
         {
-            $_GET["pl_enumeration.field_id"] = $_GET["field_id"];
+            $_POST["pl_enumeration.field_id"] = $_POST["field_id"];
         }
         $opts = array(
         "sql" => "SELECT id, name, usage_right"
@@ -38,9 +38,9 @@ switch ($req_type) {
         "lookup_reference" => "field_id",
         "lookup_added_id" => "enum_id",
         );
-        if(!isset($_GET["name"]))
+        if(!isset($_POST["name"]))
         {
-            $_GET["name"] = "NULL";
+            $_POST["name"] = "NULL";
         }
         handle_post($pdo, $opts);
         break;

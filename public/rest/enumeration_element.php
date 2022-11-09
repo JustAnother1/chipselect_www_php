@@ -9,15 +9,15 @@ include("action_post.inc");
 include("action_put.inc");
 include("action_delete.inc");
 
-$req_type = $_SERVER['REQUEST_METHOD'];
+$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
     case 'GET':
-        if(isset($_GET["enum_id"]))
+        if(isset($_POST["enum_id"]))
         {
-            $_GET["pl_enumeration_element.enum_id"] = $_GET["enum_id"];
+            $_POST["pl_enumeration_element.enum_id"] = $_POST["enum_id"];
         }
         $opts = array(
         "sql" => "SELECT id, name, description, value, isDefault"

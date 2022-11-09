@@ -12,12 +12,6 @@ function handle_delete($pdo, $opts)
 
         for($filterIdx = 0; $filterIdx < count($filters); $filterIdx++)
         {
-            if(isset($_GET[$filters[$filterIdx]]))
-            {
-                $opts["sql"] = $opts["sql"] . " WHERE " . $filters[$filterIdx] . " = \"" . $_GET[$filters[$filterIdx]] . "\"";
-                $found = true;
-                break;
-            }
             if(isset($_POST[$filters[$filterIdx]]))
             {
                 $opts["sql"] = $opts["sql"] . " WHERE " . $filters[$filterIdx] . " = \"" . $_POST[$filters[$filterIdx]] . "\"";

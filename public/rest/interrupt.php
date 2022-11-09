@@ -11,15 +11,15 @@ include("action_delete.inc");
 
 // SELECT id, name, description, number FROM p_interrupt INNER JOIN pl_interrupt ON (pl_interrupt.irq_id = p_address_block.id) WHERE pl_interrupt.per_in_id = 1;
 
-$req_type = $_SERVER['REQUEST_METHOD'];
+$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
     case 'GET':
-        if(isset($_GET["per_in_id"]))
+        if(isset($_POST["per_in_id"]))
         {
-            $_GET["pl_interrupt.per_in_id"] = $_GET["per_in_id"];
+            $_POST["pl_interrupt.per_in_id"] = $_POST["per_in_id"];
         }
         $opts = array(
         "sql" => "SELECT id, name, description, number FROM p_interrupt INNER JOIN pl_interrupt ON (pl_interrupt.irq_id = p_interrupt.id)",

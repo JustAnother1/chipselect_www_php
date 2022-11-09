@@ -25,13 +25,7 @@ function handle_put($pdo, $opts)
     $found = false;
     for($filterIdx = 0; $filterIdx < count($filters); $filterIdx++)
     {
-        if(isset($_GET[$filters[$filterIdx]]))
-        {
-            $opts["sql"] = $opts["sql"] . " WHERE " . $filters[$filterIdx] . " = \"" . $_GET[$filters[$filterIdx]] . "\"";
-            $found = true;
-            break;
-        }
-        else if(isset($_POST[$filters[$filterIdx]]))
+        if(isset($_POST[$filters[$filterIdx]]))
         {
             $opts["sql"] = $opts["sql"] . " WHERE " . $filters[$filterIdx] . " = \"" . $_POST[$filters[$filterIdx]] . "\"";
             $found = true;
@@ -62,57 +56,7 @@ function handle_put($pdo, $opts)
                     for($columnIdx = 0; $columnIdx < count($columns); $columnIdx++)
                     {
                         $curCol = $columns[$columnIdx];
-                        if(isset($_GET[$curCol]))
-                        {
-                            $val = sanitize_string($_GET[$curCol]);
-                            header('X-change_col_' . $curCol .': ' . sanitize_string($data[$curCol]) . ' -> ' . $val );
-                            $identical = True;
-                            if(isset($opts['int_columns']))
-                            {
-                                if(in_array($curCol, $opts["int_columns"]))
-                                {
-                                    $int_is = makeDecimal($data[$curCol]);
-                                    $int_should = makeDecimal($val);
-                                    if($int_is != $int_should)
-                                    {
-                                        $identical = False;
-                                    }
-                                    // else identical
-                                }
-                                else if($val != $data[$curCol])
-                                {
-                                    $identical = False;
-                                }
-                                // else identical
-                            }
-                            else
-                            {
-                                if($val != $data[$curCol])
-                                {
-                                    $identical = False;
-                                }
-                                // else identical
-                            }
-
-                            if (False == $identical)
-                            {
-                                // log the change
-                                $statement->execute(array($curCol, $data[$curCol], $val, $user_data["name"]));
-                                $statement->fetchAll(PDO::FETCH_ASSOC);
-                                // extend the update sql
-                                if(False == $changed)
-                                {
-                                    $updateSql = $updateSql . " SET " . $curCol . ' = "' . $val . '"';
-                                }
-                                else
-                                {
-                                    $updateSql = $updateSql . ", " . $curCol . ' = "' . $val . '"';
-                                }
-                                $data[$curCol] = $val;
-                                $changed = True;
-                            }
-                        }
-                        else if(isset($_POST[$curCol]))
+                        if(isset($_POST[$curCol]))
                         {
                             $val = sanitize_string($_POST[$curCol]);
                             header('X-change_col_' . $curCol .': ' . sanitize_string($data[$curCol]) . ' -> ' . $val );

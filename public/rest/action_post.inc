@@ -5,11 +5,7 @@ function handle_post($pdo, $opts)
     $user_data = authenticate($pdo);
     $entryId = $opts["entryId"];
 
-    if(isset($_GET[$entryId]))
-    {
-        $data_EntryId = $_GET[$entryId];
-    }
-    else if(isset($_POST[$entryId]))
+    if(isset($_POST[$entryId]))
     {
         $data_EntryId = $_POST[$entryId];
     }
@@ -33,15 +29,7 @@ function handle_post($pdo, $opts)
             for($columnIdx = 0; $columnIdx < count($columns); $columnIdx++)
             {
                 $curCol = $columns[$columnIdx];
-                if(isset($_GET[$curCol]))
-                {
-                    $val = sanitize_string($_GET[$curCol]);
-                    $statement->execute(array($curCol, $val, $user_data["name"]));
-                    $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-                    $fields[] = $curCol;
-                    $values[] = $val;
-                }
-                else if(isset($_POST[$curCol]))
+                if(isset($_POST[$curCol]))
                 {
                     $val = sanitize_string($_POST[$curCol]);
                     $statement->execute(array($curCol, $val, $user_data["name"]));
@@ -67,34 +55,7 @@ function handle_post($pdo, $opts)
                 $new_id = $data[0]["LAST_INSERT_ID()"];
                 if(isset($opts["link_id"]))
                 {
-                    if(isset($_GET[$opts["link_id"]]))
-                    {
-                        $ref_id = $_GET[$opts["link_id"]];
-
-                        // log what we will do
-                        $sql = "INSERT INTO p_log (action, on_table, on_column, new_value, user)"
-                            . ' VALUES ("INSERT", "' . $opts["lookup_table"] . '", ?, ?, ?)';
-                        $statement = $pdo->prepare($sql);
-
-                        $statement->execute(array($opts["lookup_reference"], $ref_id, $user_data["name"]));
-                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-                        $statement->execute(array($opts["lookup_added_id"], $new_id, $user_data["name"]));
-                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-                        // create lookup entry
-                        $sql = "INSERT INTO " . $opts["lookup_table"] . " ( " . $opts["lookup_reference"] . ", " . $opts["lookup_added_id"] . " ) VALUES ( ?, ? )";
-                        $statement = $pdo->prepare($sql);
-
-                        $statement->execute(array($ref_id, $new_id));
-                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-                        $array = array(
-                            "id" => $new_id,
-                        );
-                        echo(json_encode(array($array)));
-                    }
-                    else if(isset($_POST[$opts["link_id"]]))
+                    if(isset($_POST[$opts["link_id"]]))
                     {
                         $ref_id = $_POST[$opts["link_id"]];
 

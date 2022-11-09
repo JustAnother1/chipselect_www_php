@@ -9,15 +9,15 @@ include("action_post.inc");
 include("action_put.inc");
 include("action_delete.inc");
 
-$req_type = $_SERVER['REQUEST_METHOD'];
+$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
     case 'GET':
-        if(isset($_GET["dev_id"]))
+        if(isset($_POST["dev_id"]))
         {
-            $_GET["pl_flash_bank.dev_id"] = $_GET["dev_id"];
+            $_POST["pl_flash_bank.dev_id"] = $_POST["dev_id"];
         }
         $opts = array(
         "sql" => "SELECT id, start_address, size"
