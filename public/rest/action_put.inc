@@ -124,7 +124,8 @@ function handle_put($pdo, $opts)
                     {
                         // no change
                         header("X-debug: no change");
-                        header('HTTP/1.0 400 Bad Request');
+                        // header('HTTP/1.0 400 Bad Request');
+                        echo(json_encode(array($data)));
                     }
                 }
                 else

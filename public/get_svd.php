@@ -101,9 +101,13 @@ function print_interrupt_element($xml_prefix, $xml_indent_step, $dbh, $periphera
         $elements_indent = $xml_prefix . $xml_indent_step;
         // name
         echo($elements_indent . "<name>" . $row['name'] . "</name>\n");
-        // name
-        echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
-        // name
+        // description
+        if(NULL != $row['description']) {
+            if(0 < strlen($row['description'])) {
+                echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            }
+        }
+        // interrupt number
         echo($elements_indent . "<value>" . $row['number'] . "</value>\n");
         echo($xml_prefix . "</interrupt>\n");
     }
@@ -123,7 +127,9 @@ function print_enumeration_value_element($xml_prefix, $xml_indent_step, $dbh, $e
             echo($elements_indent . "<name>" . $row['name'] . "</name>\n");
         }
         if(NULL != $row['description']) {
-            echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            if(0 < strlen($row['description'])) {
+                echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            }
         }
         if(NULL != $row['value']) {
             echo($elements_indent . "<value>" . $row['value'] . "</value>\n");
@@ -154,7 +160,7 @@ function print_enumeration_element($xml_prefix, $xml_indent_step, $dbh, $enum_id
 }
 
 function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
-    echo($xml_prefix . "<fields>\n");
+
     $field_indent = $xml_prefix . $xml_indent_step;
     $sql = 'SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action'
         . ' FROM p_field  INNER JOIN  pl_field  ON  pl_field.field_id  = p_field.id'
@@ -163,14 +169,21 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
     $stmt = $dbh->prepare($sql);
 
     $stmt->execute(array($reg_id));
+    $first = true;
     foreach ($stmt as $row) {
+        if(true == $first) {
+            echo($xml_prefix . "<fields>\n");
+            $first = false;
+        }
         echo($field_indent . "<field>\n");
         $elements_indent = $field_indent . $xml_indent_step;
         if(NULL != $row['name']) {
             echo($elements_indent . "<name>" . $row['name'] . "</name>\n");
         }
         if(NULL != $row['description']) {
-            echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            if(0 < strlen($row['description'])) {
+                echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            }
         }
         if(NULL != $row['bit_offset']) {
             echo($elements_indent . "<bitOffset>" . $row['bit_offset'] . "</bitOffset>\n");
@@ -194,8 +207,9 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
         print_enumeration_element($elements_indent, $xml_indent_step, $dbh, $row['id'] );
         echo($field_indent . "</field>\n");
     }
-
-    echo($xml_prefix . "</fields>\n");
+    if(false == $first) {
+        echo($xml_prefix . "</fields>\n");
+    }
 }
 
 function print_registers_element($xml_prefix, $xml_indent_step, $dbh, $peripheral_id ) {
@@ -218,7 +232,9 @@ function print_registers_element($xml_prefix, $xml_indent_step, $dbh, $periphera
             echo($elements_indent . "<displayName>" . $row['display_name'] . "</displayName>\n");
         }
         if(NULL != $row['description']) {
-            echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            if(0 < strlen($row['description'])) {
+                echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            }
         }
         if(NULL != $row['alternate_register']) {
             echo($elements_indent . "<alternateRegister>" . $row['alternate_register'] . "</alternateRegister>\n");
@@ -279,7 +295,11 @@ function print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_
         // name
         echo($elements_indent . "<name>" . $row['name'] . "</name>\n");
         // description
-        echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+        if(NULL != $row['description']) {
+            if(0 < strlen($row['description'])) {
+                echo($elements_indent . "<description>" . $row['description'] . "</description>\n");
+            }
+        }
         // groupName
         $group_stmt->execute(array($row['peripheral_id']));
         foreach ($group_stmt as $grp_row) {
