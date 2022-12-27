@@ -15,14 +15,14 @@ include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
     case 'GET':
-        if(isset($_POST["enum_id"]))
+        if(isset($_POST["field_id"]))
         {
-            $_POST["pl_enumeration_element.enum_id"] = $_POST["enum_id"];
+            $_POST["pl_field_enum_element.field_id"] = $_POST["field_id"];
         }
         $opts = array(
         "sql" => "SELECT id, name, description, value, isDefault"
-              . " FROM p_enumeration_element INNER JOIN pl_enumeration_element ON (pl_enumeration_element.value_id = p_enumeration_element.id)",
-        "filters" => array( "pl_enumeration_element.enum_id" ),
+              . " FROM p_enumeration_element INNER JOIN pl_field_enum_element ON (pl_field_enum_element.value_id = p_enumeration_element.id)",
+        "filters" => array( "pl_field_enum_element.field_id" ),
         "allowUnfiltered" => false,
         );
         handle_get($pdo, $opts);
@@ -34,8 +34,8 @@ switch ($req_type) {
         "table" => "p_enumeration_element",
         "columns" => array( "description", "value" , "isDefault" ),
         "link_id" => "enum_id",
-        "lookup_table" => "pl_enumeration_element",
-        "lookup_reference" => "enum_id",
+        "lookup_table" => "pl_field_enum_element",
+        "lookup_reference" => "field_id",
         "lookup_added_id" => "value_id",
         );
         handle_post($pdo, $opts);
