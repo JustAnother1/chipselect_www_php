@@ -54,47 +54,17 @@ echo('    <title>' . $peripheral_data['group_name'] . '</title>\n');
 
 <?php
 
-function print_enum_elements($dbh, $enum_id) {
+function print_enum_elements($dbh, $field_id) {
     $sql = 'SELECT id, name, description, value'
-    . ' FROM p_enumeration_element INNER JOIN  pl_enumeration_element ON  pl_enumeration_element.value_id  = p_enumeration_element.id'
-    . ' WHERE pl_enumeration_element.enum_id = ?';
+    . ' FROM p_enumeration_element INNER JOIN  pl_field_enum_element ON  pl_field_enum_element.value_id  = p_enumeration_element.id'
+    . ' WHERE pl_field_enum_element.field_id = ?';
     $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($enum_id));
+    $stmt->execute(array($field_id));
     echo("<div id=\"enum_value\">\n");
     foreach ($stmt as $row) {
         echo("    <p> " . $row['value'] . " : " . $row['name'] . " <br />\n");
         echo("    <p> " . $row['description'] . " <br />\n");
         echo("</p>\n");
-    }
-    echo("</div>\n");
-}
-
-function print_enums($dbh, $field_id) {
-    $sql = 'SELECT id, name, usage_right'
-    . ' FROM p_enumeration INNER JOIN  pl_enumeration ON  pl_enumeration.enum_id  = p_enumeration.id'
-    . ' WHERE pl_enumeration.field_id = ?';
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($field_id));
-    echo("<div id=\"enum\">\n");
-    foreach ($stmt as $row) {
-        echo("    <p> Enumeration: ");
-        if(NULL != $row['name']) {
-            if('NULL' != $row['name']) {
-                if('None' != $row['name']) {
-                    echo($row['name']);
-                }
-            }
-        }
-        if(NULL != $row['usage_right']) {
-            if('NULL' != $row['usage_right']) {
-                if('None' != $row['usage_right']) {
-                    echo(" ( " . $row['usage_right'] . " )");
-                }
-            }
-        }
-        echo("<br />\n</p>\n");
-        print_enum_elements($dbh, $row['id']);
-        echo("<p>End of enumeration elements list.</p>\n");
     }
     echo("</div>\n");
 }
@@ -106,11 +76,31 @@ function print_one_field($dbh, $row) {
         echo("    access : " . $row['access'] . "<br />\n");
     }
     echo("</p>\n");
-    print_enums($dbh, $row['id']);
+    if(1 == $row['is_Enum'])
+    {
+        echo("    <p> Enumeration: ");
+        if(NULL != $row['enum_name']) {
+            if('NULL' != $row['enum_name']) {
+                if('None' != $row['enum_name']) {
+                    echo($row['enum_name']);
+                }
+            }
+        }
+        if(NULL != $row['enum_usage_right']) {
+            if('NULL' != $row['enum_usage_right']) {
+                if('None' != $row['enum_usage_right']) {
+                    echo(" ( " . $row['enum_usage_right'] . " )");
+                }
+            }
+        }
+        echo("<br />\n</p>\n");
+        print_enum_elements($dbh, $row['id']);
+        echo("<p>End of enumeration elements list.</p>\n");
+    }
 }
 
 function print_fields($dbh, $reg_name, $reg_id, $reg_size, $reg_access, $reg_reset_value) {
-    $sql = 'SELECT id, name, description, bit_offset, size_bit, access'
+    $sql = 'SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, is_Enum, enum_name, enum_usage_right'
     . ' FROM p_field INNER JOIN  pl_field ON  pl_field.field_id  = p_field.id'
     . ' WHERE pl_field.reg_id = ?'
     . ' ORDER BY bit_offset';
@@ -126,6 +116,11 @@ function print_fields($dbh, $reg_name, $reg_id, $reg_size, $reg_access, $reg_res
         $row_arr['bit_offset'] = $row['bit_offset'];
         $row_arr['size_bit'] = $row['size_bit'];
         $row_arr['access'] = $row['access'];
+        $row_arr['modified_write_values'] = $row['modified_write_values'];
+        $row_arr['read_action'] = $row['read_action'];
+        $row_arr['is_Enum'] = $row['is_Enum'];
+        $row_arr['enum_name'] = $row['enum_name'];
+        $row_arr['enum_usage_right'] = $row['enum_usage_right'];
         $all[$i] = $row_arr;
         $i = $i + 1;
     }

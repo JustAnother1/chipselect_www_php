@@ -113,13 +113,13 @@ function print_interrupt_element($xml_prefix, $xml_indent_step, $dbh, $periphera
     }
 }
 
-function print_enumeration_value_element($xml_prefix, $xml_indent_step, $dbh, $enum_val_id ) {
+function print_enumeration_value_element($xml_prefix, $xml_indent_step, $dbh, $field_id ) {
     $sql = 'SELECT id, name, description, value'
-        . ' FROM p_enumeration_element  INNER JOIN  pl_enumeration_element  ON  pl_enumeration_element.value_id  = p_enumeration_element.id'
-        . ' WHERE pl_enumeration_element.enum_id = ?'
+        . ' FROM p_enumeration_element  INNER JOIN  pl_field_enum_element  ON  pl_field_enum_element.value_id  = p_enumeration_element.id'
+        . ' WHERE pl_field_enum_element.field_id = ?'
         . ' ORDER BY value';
     $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($enum_val_id));
+    $stmt->execute(array($field_id));
     foreach ($stmt as $row) {
         echo($xml_prefix . "<enumeratedValue>\n");
         $elements_indent = $xml_prefix . $xml_indent_step;
@@ -138,31 +138,10 @@ function print_enumeration_value_element($xml_prefix, $xml_indent_step, $dbh, $e
     }
 }
 
-function print_enumeration_element($xml_prefix, $xml_indent_step, $dbh, $enum_id ) {
-    $sql = 'SELECT id, name, usage_right'
-        . ' FROM p_enumeration  INNER JOIN  pl_enumeration  ON  pl_enumeration.enum_id  = p_enumeration.id'
-        . ' WHERE pl_enumeration.field_id = ?'
-        . ' ORDER BY name';
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute(array($enum_id));
-    foreach ($stmt as $row) {
-        echo($xml_prefix . "<enumeratedValues>\n");
-        $elements_indent = $xml_prefix . $xml_indent_step;
-        if(NULL != $row['name']) {
-            echo($elements_indent . "<name>" . $row['name'] . "</name>\n");
-        }
-        if(NULL != $row['usage_right']) {
-            echo($elements_indent . "<usage>" . $row['usage_right'] . "</usage>\n");
-        }
-        print_enumeration_value_element($elements_indent, $xml_indent_step, $dbh, $row['id']);
-        echo($xml_prefix . "</enumeratedValues>\n");
-    }
-}
-
 function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
 
     $field_indent = $xml_prefix . $xml_indent_step;
-    $sql = 'SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action'
+    $sql = 'SELECT id, name, description, bit_offset, size_bit, access, modified_write_values, read_action, is_Enum, enum_name, enum_usage_right'
         . ' FROM p_field  INNER JOIN  pl_field  ON  pl_field.field_id  = p_field.id'
         . ' WHERE pl_field.reg_id = ?'
         . ' ORDER BY name';
@@ -204,7 +183,19 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
         if(NULL != $row['read_action']) {
             echo($elements_indent . "<readAction>" . $row['read_action'] . "</readAction>\n");
         }
-        print_enumeration_element($elements_indent, $xml_indent_step, $dbh, $row['id'] );
+        if(1 ==  $row['is_Enum']) {
+            print_enumeration_element($elements_indent, $xml_indent_step, $dbh, $row['id'] );
+            echo($elements_indent . "<enumeratedValues>\n");
+            $elements_indent = $elements_indent . $xml_indent_step;
+            if(NULL != $row['enum_name']) {
+                echo($elements_indent . "<name>" . $row['enum_name'] . "</name>\n");
+            }
+            if(NULL != $row['enum_usage_right']) {
+                echo($elements_indent . "<usage>" . $row['enum_usage_right'] . "</usage>\n");
+            }
+            print_enumeration_value_element($elements_indent, $xml_indent_step, $dbh, $row['id']);
+            echo($xml_prefix . "</enumeratedValues>\n");
+        }
         echo($field_indent . "</field>\n");
     }
     if(false == $first) {
