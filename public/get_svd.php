@@ -184,7 +184,6 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
             echo($elements_indent . "<readAction>" . $row['read_action'] . "</readAction>\n");
         }
         if(1 ==  $row['is_Enum']) {
-            print_enumeration_element($elements_indent, $xml_indent_step, $dbh, $row['id'] );
             echo($elements_indent . "<enumeratedValues>\n");
             $elements_indent = $elements_indent . $xml_indent_step;
             if(NULL != $row['enum_name']) {
