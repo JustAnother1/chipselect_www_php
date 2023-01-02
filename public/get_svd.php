@@ -187,7 +187,9 @@ function print_fields_element($xml_prefix, $xml_indent_step, $dbh, $reg_id ) {
             echo($elements_indent . "<enumeratedValues>\n");
             $elements_indent = $elements_indent . $xml_indent_step;
             if(NULL != $row['enum_name']) {
-                echo($elements_indent . "<name>" . $row['enum_name'] . "</name>\n");
+                if("NULL" != $row['enum_name']) {
+                    echo($elements_indent . "<name>" . $row['enum_name'] . "</name>\n");
+                }
             }
             if(NULL != $row['enum_usage_right']) {
                 echo($elements_indent . "<usage>" . $row['enum_usage_right'] . "</usage>\n");
