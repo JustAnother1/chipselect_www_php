@@ -13,6 +13,7 @@ include("start.inc");
 <?php
 include ("header.inc");
 echo("<br />\n<h1>Vendors:</h1>\n");
+echo("<a href=\"add_vendor.php\" >add a new vendor </a>\n<br />\n<br />\n");
 include ("../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 

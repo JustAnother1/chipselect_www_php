@@ -62,25 +62,25 @@ function handle_post($pdo, $opts)
                         // log what we will do
                         $sql = "INSERT INTO p_log (action, on_table, on_column, new_value, user)"
                             . ' VALUES ("INSERT", "' . $opts["lookup_table"] . '", ?, ?, ?)';
-                            $statement = $pdo->prepare($sql);
+                        $statement = $pdo->prepare($sql);
 
-                            $statement->execute(array($opts["lookup_reference"], $ref_id, $user_data["name"]));
-                            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                        $statement->execute(array($opts["lookup_reference"], $ref_id, $user_data["name"]));
+                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                            $statement->execute(array($opts["lookup_added_id"], $new_id, $user_data["name"]));
-                            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                        $statement->execute(array($opts["lookup_added_id"], $new_id, $user_data["name"]));
+                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                            // create lookup entry
-                            $sql = "INSERT INTO " . $opts["lookup_table"] . " ( " . $opts["lookup_reference"] . ", " . $opts["lookup_added_id"] . " ) VALUES ( ?, ? )";
-                            $statement = $pdo->prepare($sql);
+                        // create lookup entry
+                        $sql = "INSERT INTO " . $opts["lookup_table"] . " ( " . $opts["lookup_reference"] . ", " . $opts["lookup_added_id"] . " ) VALUES ( ?, ? )";
+                        $statement = $pdo->prepare($sql);
 
-                            $statement->execute(array($ref_id, $new_id));
-                            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                        $statement->execute(array($ref_id, $new_id));
+                        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                            $array = array(
-                                "id" => $new_id,
-                            );
-                            echo(json_encode(array($array)));
+                        $array = array(
+                            "id" => $new_id,
+                        );
+                        echo(json_encode(array($array)));
                     }
                     else
                     {
