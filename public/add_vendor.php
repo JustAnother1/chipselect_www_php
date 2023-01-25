@@ -15,7 +15,6 @@ include ("header.inc");
 include ("rest/sanitize.inc");
 
 echo("<br />\n");
-$vendor_name = $_GET['vendor'];
 
 if(isset($_POST['add']))
 {
