@@ -67,6 +67,8 @@ echo('<p><a href="' . $vendor_url . '">' . $vendor_url . "</a></p>\n");
 // if we get more information regarding the Vendor into p_vendor then we could request that and show it as an introduction to the vendors devices
 echo("<h2>Devices</h2>\n");
 
+echo("<a href=\"add_device.php?vendor=" . $vendor_name . "\" >add a new device of this vendor </a>\n<br />\n<br />\n");
+
 echo("<table>\n");
 echo("  <tr>\n");
 echo("    <th>Name</th>\n");

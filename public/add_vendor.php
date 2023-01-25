@@ -15,6 +15,7 @@ include ("header.inc");
 include ("rest/sanitize.inc");
 
 echo("<br />\n");
+$vendor_name = $_GET['vendor'];
 
 if(isset($_POST['add']))
 {
@@ -71,7 +72,7 @@ else
     {
         // not logged in - > send email
         echo("<p>You are not logged in. If you do not have an account you can <a href=\"mailto:info@chipselect.org");
-        echo("?subject=add vendor");
+        echo("?subject=add%20vendor");
         echo("&body=chipselect.org%20team,%0A%0D%0A%0DThere%20is%20a%20vendor%20missing%20in%20your%20list:%0A%0D%0A%0Dvendor%20name:%0A%0D%0A%0DURL:%0A%0D%0A%0Dbest%20regards,%0A%0D%0A%0Dyour%20name");
         echo("\">report the missing vendor to us</a></p>");
         echo("<p>If you want to register an account send an email to <a href=\"mailto:info@chipselect.org\">info@chipselect.org</a></p>");
