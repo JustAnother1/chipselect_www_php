@@ -3,3 +3,4 @@ Dockerfile
 nginx.conf
 public/privat_*
 *.sh
+public/doc/*
