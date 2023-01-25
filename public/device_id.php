@@ -1,5 +1,127 @@
 <?php
 include("start.inc");
+
+function documentationSection($dbh, $device_data) {
+    $path = 'doc/' . $device_data['id'] . "/";
+    if(is_dir($path)) {
+        // folder exists -> scan for files
+        $foundFiles = false;
+        $files = scandir($path);
+        foreach($files as $file) {
+            if((str_ends_with($file, '.pdf')) || (str_ends_with($file, '.PDF'))) {
+                if(false == $foundFiles) {
+                    $foundFiles = true;
+                    echo("<div id=\"docFiles\">\n");
+                    echo("<h2>Documentation</h2>\n");
+                }
+                echo("<a href=\"" . $path . $file . "\">" . $file . "</a>\n");
+                echo("<br />\n");
+            }
+        }
+        if(true == $foundFiles)
+        {
+            echo("</div>\n");
+        }
+    }
+    // else no files for this device.
+}
+
+function architectureSection($dbh, $device_data) {
+    // Architecture
+    $sql = 'SELECT name, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick'
+        . ' FROM p_architecture'
+        . ' WHERE id = ?';
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute(array($device_data['architecture_id']));
+    $row = $stmt->fetch();
+    if( false != $row) {
+        echo("<div id=\"architecture\">\n");
+        echo("<h2>Architecture</h2>\n");
+        // echo("<!-- " . json_encode($row) . " -->\n");
+        echo("    <p>Architecture : " . $row['name']);
+        if(NULL != $row['svd_name']) {
+            print(" (" . $row['svd_name'] . ")</p>\n");
+        } else {
+            print("</p>\n");
+        }
+        if(NULL != $row['revision']) {
+            print("    <p>revision : " . $row['revision'] . "</p>\n");
+        }
+        if(NULL != $row['endian']) {
+            print("    <p>endian : " . $row['endian'] . "</p>\n");
+        }
+        if(NULL != $row['hasMPU']) {
+            if(true == $row['hasMPU']) {
+                print("    <p>Memory Protection Unit (MPU) : available</p>\n");
+            } else {
+                print("    <p>Memory Protection Unit (MPU) : not available</p>\n");
+            }
+        }
+        if(NULL != $row['hasFPU']) {
+            if(true == $row['hasFPU']) {
+                print("    <p>Floating Point Unit (FPU) : available</p>\n");
+            } else {
+                print("    <p>Floating Point Unit (FPU) : not available</p>\n");
+            }
+        }
+        if(NULL != $row['interrupt_prio_bits']) {
+            print("    <p>Number of relevant bits in Interrupt priority : " . $row['interrupt_prio_bits'] . "</p>\n");
+        }
+        if(NULL != $row['ARM_Vendor_systick']) {
+            if(true == $row['ARM_Vendor_systick']) {
+                print("    <p>Systick : vendor specific</p>\n");
+            } else {
+                print("    <p>Systick : as defined by ARM</p>\n");
+            }
+        }
+        echo("</div>\n");
+    }
+    // else architecture unknown
+}
+
+
+function peripheralsSection($dbh, $device_data) {
+    // Peripheral Instances + Interrupts
+    $sql = 'SELECT name, description, base_address, peripheral_id, per_in_id'
+        . ' FROM p_peripheral_instance INNER JOIN  pl_peripheral_instance ON  pl_peripheral_instance.per_in_id  = p_peripheral_instance.id'
+        . ' WHERE pl_peripheral_instance.dev_id = ?'
+        . ' ORDER BY name';
+    $stmt = $dbh->prepare($sql);
+
+    $irq_sql = 'SELECT name, description, number'
+            . ' FROM p_interrupt INNER JOIN pl_interrupt ON pl_interrupt.irq_id = p_interrupt.id'
+            . ' WHERE pl_interrupt.per_in_id = ?'
+            . ' ORDER BY number';
+    $irq_stmt = $dbh->prepare($irq_sql);
+    
+    $stmt->execute(array($device_data['id']));
+    echo("<div id=\"peripheral_instance\">\n");
+    echo("<h2>Peripherals</h2>\n");
+    foreach ($stmt as $row) {
+        echo("    <p>name : <a href=\"peripheral_id.php?id=" . $row['peripheral_id'] . "\">" . $row['name'] . "</a><br />\n");
+        if(null != $row['description'])
+        {
+            echo("    description : " . nl2br($row['description']) . "</a><br />\n");
+        }
+        echo("    base address : 0x" . dechex(intval($row['base_address'])) . "<br />\n");
+        $irq_stmt->execute(array($row['per_in_id']));
+        foreach ($irq_stmt as $irq_row) {
+            if(NULL == $irq_row['description'])
+            {
+                echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . "<br />\n");
+            }
+            else
+            {
+                echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . " : " . $irq_row['description'] . "<br />\n");
+            }
+        }
+        echo("</p>\n");
+    }
+    echo("</div>\n");
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -155,6 +277,8 @@ if(isset($_GET['id']))
         echo("    <p>Market State : " . $row['name'] . "</a></p>\n");
         echo("</div>\n");
     }
+    
+    documentationSection($dbh, $device_data);
 }
 else if(isset($_GET['svd_id']))
 {
@@ -236,95 +360,8 @@ else
     exit;
 }
 
-// Architecture
-$sql = 'SELECT name, svd_name, revision, endian, hasMPU, hasFPU, interrupt_prio_bits, ARM_Vendor_systick'
-    . ' FROM p_architecture'
-    . ' WHERE id = ?';
-$stmt = $dbh->prepare($sql);
-$stmt->execute(array($device_data['architecture_id']));
-$row = $stmt->fetch();
-if( false != $row) {
-    echo("<div id=\"architecture\">\n");
-    echo("<h2>Architecture</h2>\n");
-    // echo("<!-- " . json_encode($row) . " -->\n");
-    echo("    <p>Architecture : " . $row['name']);
-    if(NULL != $row['svd_name']) {
-        print(" (" . $row['svd_name'] . ")</p>\n");
-    } else {
-        print("</p>\n");
-    }
-    if(NULL != $row['revision']) {
-        print("    <p>revision : " . $row['revision'] . "</p>\n");
-    }
-    if(NULL != $row['endian']) {
-        print("    <p>endian : " . $row['endian'] . "</p>\n");
-    }
-    if(NULL != $row['hasMPU']) {
-        if(true == $row['hasMPU']) {
-            print("    <p>Memory Protection Unit (MPU) : available</p>\n");
-        } else {
-            print("    <p>Memory Protection Unit (MPU) : not available</p>\n");
-        }
-    }
-    if(NULL != $row['hasFPU']) {
-        if(true == $row['hasFPU']) {
-            print("    <p>Floating Point Unit (FPU) : available</p>\n");
-        } else {
-            print("    <p>Floating Point Unit (FPU) : not available</p>\n");
-        }
-    }
-    if(NULL != $row['interrupt_prio_bits']) {
-        print("    <p>Number of relevant bits in Interrupt priority : " . $row['interrupt_prio_bits'] . "</p>\n");
-    }
-    if(NULL != $row['ARM_Vendor_systick']) {
-        if(true == $row['ARM_Vendor_systick']) {
-            print("    <p>Systick : vendor specific</p>\n");
-        } else {
-            print("    <p>Systick : as defined by ARM</p>\n");
-        }
-    }
-    echo("</div>\n");
-}
-// else architecture unknown
-
-// Peripheral Instances + Interrupts
-$sql = 'SELECT name, description, base_address, peripheral_id, per_in_id'
-    . ' FROM p_peripheral_instance INNER JOIN  pl_peripheral_instance ON  pl_peripheral_instance.per_in_id  = p_peripheral_instance.id'
-    . ' WHERE pl_peripheral_instance.dev_id = ?'
-    . ' ORDER BY name';
-$stmt = $dbh->prepare($sql);
-
-$irq_sql = 'SELECT name, description, number'
-        . ' FROM p_interrupt INNER JOIN pl_interrupt ON pl_interrupt.irq_id = p_interrupt.id'
-        . ' WHERE pl_interrupt.per_in_id = ?'
-        . ' ORDER BY number';
-$irq_stmt = $dbh->prepare($irq_sql);
-
-
-$stmt->execute(array($device_data['id']));
-echo("<div id=\"peripheral_instance\">\n");
-echo("<h2>Peripherals</h2>\n");
-foreach ($stmt as $row) {
-    echo("    <p>name : <a href=\"peripheral_id.php?id=" . $row['peripheral_id'] . "\">" . $row['name'] . "</a><br />\n");
-    if(null != $row['description'])
-    {
-        echo("    description : " . nl2br($row['description']) . "</a><br />\n");
-    }
-    echo("    base address : 0x" . dechex(intval($row['base_address'])) . "<br />\n");
-    $irq_stmt->execute(array($row['per_in_id']));
-    foreach ($irq_stmt as $irq_row) {
-        if(NULL == $irq_row['description'])
-        {
-            echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . "<br />\n");
-        }
-        else
-        {
-            echo("    Interrupt (" . $irq_row['number'] . ")  " .  $irq_row['name'] . " : " . $irq_row['description'] . "<br />\n");
-        }
-    }
-    echo("</p>\n");
-}
-echo("</div>\n");
+architectureSection($dbh, $device_data);
+peripheralsSection($dbh, $device_data);
 
 // Footer
 include ("footer.inc");
