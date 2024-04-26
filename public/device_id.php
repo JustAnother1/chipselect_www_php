@@ -8,6 +8,7 @@ function documentationSection($dbh, $device_data) {
         $foundFiles = false;
         $files = scandir($path);
         foreach($files as $file) {
+            // pdf files stored on chipselect.org server
             if((str_ends_with($file, '.pdf')) || (str_ends_with($file, '.PDF'))) {
                 if(false == $foundFiles) {
                     $foundFiles = true;
@@ -15,6 +16,16 @@ function documentationSection($dbh, $device_data) {
                     echo("<h2>Documentation</h2>\n");
                 }
                 echo("<a href=\"" . $path . $file . "\">" . $file . "</a>\n");
+                echo("<br />\n");
+            }
+            // links to external files
+            if((str_ends_with($file, '.url')) || (str_ends_with($file, '.URL'))) {
+                if(false == $foundFiles) {
+                    $foundFiles = true;
+                    echo("<div id=\"docFiles\">\n");
+                    echo("<h2>Documentation</h2>\n");
+                }
+                include($path . $file);
                 echo("<br />\n");
             }
         }
