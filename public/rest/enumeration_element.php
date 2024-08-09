@@ -33,7 +33,7 @@ switch ($req_type) {
         "entryId" => "name",
         "table" => "p_enumeration_element",
         "columns" => array( "description", "value" , "isDefault" ),
-        "link_id" => "enum_id",
+        "link_id" => "field_id",
         "lookup_table" => "pl_field_enum_element",
         "lookup_reference" => "field_id",
         "lookup_added_id" => "value_id",
