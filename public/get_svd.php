@@ -246,10 +246,10 @@ function print_registers_element($xml_prefix, $xml_indent_step, $dbh, $periphera
         }
         echo($elements_indent . "<protection>n</protection>\n");
         if(NULL != $row['reset_value']) {
-            echo($elements_indent . "<resetValue>0x" . dechex(intval($row['reset_value'])) . "</resetValue>\n");
+            echo($elements_indent . "<resetValue>" . $row['reset_value'] . "</resetValue>\n");
         }
         if(NULL != $row['reset_Mask']) {
-            echo($elements_indent . "<resetMask>0x" . dechex(intval($row['reset_Mask'])) . "</resetMask>\n");
+            echo($elements_indent . "<resetMask>" . $row['reset_Mask'] . "</resetMask>\n");
         }
         if(NULL != $row['data_type']) {
             echo($elements_indent . "<dataType>" . $row['data_type'] . "</dataType>\n");
