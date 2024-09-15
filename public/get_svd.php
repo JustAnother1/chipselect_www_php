@@ -302,7 +302,7 @@ function print_peripherals_element($xml_prefix, $xml_indent_step, $dbh, $device_
             echo($elements_indent . "<disableCondition>" . $row['disable_Condition'] . "</disableCondition>\n");
         }
         // baseAddress
-        echo($elements_indent . "<baseAddress>0x" . dechex(intval($row['base_address'])) . "</baseAddress>\n");
+        echo($elements_indent . "<baseAddress>" . $row['base_address'] . "</baseAddress>\n");
 
         print_addressBlock_element($elements_indent, $xml_indent_step, $dbh, $row['peripheral_id']);
         print_interrupt_element($elements_indent, $xml_indent_step, $dbh, $row['per_in_id']);
