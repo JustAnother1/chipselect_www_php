@@ -1,0 +1,46 @@
+version: '3'
+services:
+
+    chipselect:
+        image: nginx:latest
+        restart: always
+        environment:
+            TZ: "Europe/Berlin" # adopt to your needs
+        ports:
+            - "1080:80" # adopt to your needs
+        volumes:
+            - ./chipselect/nginx:/etc/nginx/conf.d/
+            - ./chipselect/www:/app:ro
+
+    cs_php:
+        build: ./chipselect/
+        restart: always
+        environment:
+            TZ: "Europe/Berlin" # adopt to your needs
+        volumes:
+            - ./chipselect/www:/app:ro
+
+    cs_mysql:
+        image: mariadb:latest
+        restart: always
+        user: 1000:1000
+        command: mariadbd --innodb-buffer-pool-size=6000M --key_buffer_size=10M
+        environment:
+            TZ: "Europe/Berlin"
+            MYSQL_ROOT_PASSWORD: '<mariadb_root_password>' # adopt to your needs
+            MYSQL_USER: '<mariadb_user>' # adopt to your needs
+            MYSQL_PASSWORD: '<mariadb_user_password>' # adopt to your needs
+            MYSQL_DATABASE: 'microcontrollis' # adopt to your needs
+        volumes:
+            - ./chipselect/mariadb:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        restart: always
+        environment:
+            TZ: "Europe/Berlin" # adopt to your needs
+            PMA_HOST: cs_mysql
+            PMA_USER: root
+            PMA_PASSWORD: '<mariadb_root_password>' # adopt to your needs
+        ports:
+            - "1180:80" # adopt to your needs
