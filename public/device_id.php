@@ -152,7 +152,7 @@ if(isset($_GET['id']))
     if(!is_numeric($device_id)) {
         echo("    </head>\n");
         echo("    <body>\n");
-        echo("     <h1> Invalid device id of " . $device_id . "</h1>\n");
+        echo("     <h1> Invalid device id !</h1>\n");
         echo("    </body>\n");
         echo("</html>\n");
         exit;
@@ -299,7 +299,7 @@ else if(isset($_GET['svd_id']))
     if(!is_numeric($device_id)) {
         echo("    </head>\n");
         echo("    <body>\n");
-        echo("     <h1> Invalid SVD id of " . $device_id . "</h1>\n");
+        echo("     <h1> Invalid SVD id !</h1>\n");
         echo("    </body>\n");
         echo("</html>\n");
         exit;

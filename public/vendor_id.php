@@ -36,7 +36,7 @@ $row = $stmt->fetch();
 if(false == $row) {
     echo("    </head>\n");
     echo("    <body>\n");
-    echo("     <h1> Invalid vendor name of " . $vendor_name . "</h1>\n");
+    echo("     <h1> Invalid vendor name !</h1>\n");
     echo("    </body>\n");
     echo("</html>\n");
     exit;

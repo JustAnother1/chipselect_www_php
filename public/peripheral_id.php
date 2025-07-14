@@ -16,7 +16,7 @@ $peripheral_id = $_GET['id'];
 if(!is_numeric($peripheral_id)) {
     echo("    </head>\n");
     echo("    <body>\n");
-    echo("     <h1> Invalid peripheral id of " . $peripheral_id . "</h1>\n");
+    echo("     <h1> Invalid peripheral id </h1>\n");
     echo("    </body>\n");
     echo("</html>\n");
     exit;
@@ -38,7 +38,7 @@ $row = $stmt->fetch();
 if(false == $row) {
     echo("    </head>\n");
     echo("    <body>\n");
-    echo("     <h1> Invalid peripheral id of " . $peripheral_id . "</h1>\n");
+    echo("     <h1> Invalid peripheral id </h1>\n");
     echo("    </body>\n");
     echo("</html>\n");
     exit;
