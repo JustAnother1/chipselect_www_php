@@ -1,6 +1,6 @@
 #!/bin/bash
 
-host=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -f name=docker-cs_mysql-1 -q))
+host=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -f name=docker_cs_mysql_1 -q))
 
 echo "MariaDB is at $host"
 
