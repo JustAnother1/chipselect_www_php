@@ -45,7 +45,7 @@ if(false == $row) {
 }
 $peripheral_data = $row;
 
-echo('    <title>' . $peripheral_data['group_name'] . '</title>\n');
+echo("    <title>" . $peripheral_data['group_name'] . "</title>\n");
         ?>
     <meta  http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="style.css">
