@@ -68,6 +68,7 @@ ChipSelect is open source!
 <a href="https://github.com/JustAnother1/chipselect_www_php">source</a>
 <a href="https://github.com/JustAnother1/chipselect_doc">documentation</a>
 <a href="https://github.com/JustAnother1/chipselect_importer">importer</a>
+<a href="https://drive.proton.me/urls/TZRM5MNZ10#4VcrbWEQ9OyF">database</a>
 <br/>
 <?php
 include ("footer.inc");
