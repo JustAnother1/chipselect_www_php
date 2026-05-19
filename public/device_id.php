@@ -104,10 +104,12 @@ function peripheralsSection($dbh, $device_data) {
             . ' WHERE pl_interrupt.per_in_id = ?'
             . ' ORDER BY number';
     $irq_stmt = $dbh->prepare($irq_sql);
-    
+
     $stmt->execute(array($device_data['id']));
     echo("<div id=\"peripheral_instance\">\n");
     echo("<h2>Peripherals</h2>\n");
+    echo("<a href=\"add_peripheral.php?id=" . $device_data['id'] . "&svd_id=" . $device_data['svd_id'] . "&name=" . $device_data['name'] . "\" >add a new peripheral to this chip </a>");
+    echo("<br />");
     foreach ($stmt as $row) {
         echo("    <p>name : <a href=\"peripheral_id.php?id=" . $row['peripheral_id'] . "\">" . $row['name'] . "</a><br />\n");
         if(null != $row['description'])
@@ -288,7 +290,7 @@ if(isset($_GET['id']))
         echo("    <p>Market State : " . $row['name'] . "</a></p>\n");
         echo("</div>\n");
     }
-    
+
     documentationSection($dbh, $device_data);
 }
 else if(isset($_GET['svd_id']))
@@ -353,6 +355,7 @@ else if(isset($_GET['svd_id']))
     $row = $stmt->fetch();
     if( false != $row) {
         // print_r($row);
+        $device_data['vendor'] = $row['name'];
         echo("<div id=\"vendor\">\n");
         echo("    <p>Vendor Web: <a href=\"" . $row['url'] . "\">" . $row['name'] . "</a></p>\n");
         echo("    <p><a href=\"" .  $row['name'] . "--" . $device_data['name'] . ".svd\" download>download svd file</a></p>\n");

@@ -9,8 +9,15 @@ include("action_post.inc");
 include("action_put.inc");
 include("action_delete.inc");
 
-$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
+if(isset($_POST["REQUEST_METHOD"]))
+{
+    $req_type = $_POST['REQUEST_METHOD'];
+}
+else
+{
+    $req_type = "undefined";
+}
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {

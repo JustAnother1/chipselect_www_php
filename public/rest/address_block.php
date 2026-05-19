@@ -10,9 +10,16 @@ include("action_put.inc");
 include("action_delete.inc");
 
 // SELECT id, address_offset, size, mem_usage protection FROM p_address_block INNER JOIN pl_address_block ON (pl_address_block.addr_id = p_address_block.id) WHERE pl_address_block.per_id = 1;
-
-$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
+if(isset($_POST["REQUEST_METHOD"]))
+{
+    $req_type = $_POST['REQUEST_METHOD'];
+}
+else
+{
+    $req_type = "undefined";
+}
+
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {

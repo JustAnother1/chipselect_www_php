@@ -172,6 +172,10 @@ $stmt = $dbh->prepare($sql);
 $stmt->execute(array($peripheral_id));
 echo("<div id=\"registers\">\n");
 echo("<h2>Registers</h2>\n");
+
+echo("<a href=\"add_register.php?id=" .$peripheral_id . "\" >add a new register to this peripheral </a>");
+echo("<br />");
+
 echo("<div id=\"registers_idx\">\n");
 
 foreach ($stmt as $row) {

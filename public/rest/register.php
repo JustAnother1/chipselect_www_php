@@ -12,10 +12,15 @@ include("action_delete.inc");
 // SELECT id, name, display_name, description, address_offset, size, access, reset_value, alternate_register, reset_mask, read_action, modified_write_values, data_type
 // FROM p_register INNER JOIN pl_register ON (pl_register.reg_id = p_register.id) WHERE pl_register.per_id = 1;
 
-
-
-$req_type = $_POST['REQUEST_METHOD'];
 header('Content-Type: application/json');
+if(isset($_POST["REQUEST_METHOD"]))
+{
+    $req_type = $_POST['REQUEST_METHOD'];
+}
+else
+{
+    $req_type = "undefined";
+}
 include ("../../secret.inc");
 $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 switch ($req_type) {
