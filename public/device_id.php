@@ -111,12 +111,12 @@ function peripheralsSection($dbh, $device_data) {
     echo("<a href=\"add_peripheral.php?id=" . $device_data['id'] . "&svd_id=" . $device_data['svd_id'] . "&name=" . $device_data['name'] . "\" >add a new peripheral to this chip </a>");
     echo("<br />");
     foreach ($stmt as $row) {
-        echo("    <p>name : <a href=\"peripheral_id.php?id=" . $row['peripheral_id'] . "\">" . $row['name'] . "</a><br />\n");
+        echo("<p>name : <a href=\"peripheral_id.php?id=" . $row['peripheral_id'] . "\">" . $row['name'] . "</a><br />\n");
         if(null != $row['description'])
         {
-            echo("    description : " . nl2br($row['description']) . "</a><br />\n");
+            echo("description : " . nl2br($row['description']) . "<br />\n");
         }
-        echo("    base address : 0x" . dechex(intval($row['base_address'])) . "<br />\n");
+        echo("    base address : " . $row['base_address'] . "<br />\n");
         $irq_stmt->execute(array($row['per_in_id']));
         foreach ($irq_stmt as $irq_row) {
             if(NULL == $irq_row['description'])
@@ -274,7 +274,7 @@ if(isset($_GET['id']))
     $row = $stmt->fetch();
     if( false != $row) {
         echo("<div id=\"package\">\n");
-        echo("    <p>Package : " . $row['name'] . "</a></p>\n");
+        echo("    <p>Package : " . $row['name'] . "</p>\n");
         echo("</div>\n");
     }
 
@@ -287,7 +287,7 @@ if(isset($_GET['id']))
     $row = $stmt->fetch();
     if( false != $row) {
         echo("<div id=\"market_state\">\n");
-        echo("    <p>Market State : " . $row['name'] . "</a></p>\n");
+        echo("    <p>Market State : " . $row['name'] . "</p>\n");
         echo("</div>\n");
     }
 
