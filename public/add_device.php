@@ -30,10 +30,10 @@ function inputSvdId($pdo, $vendor_name) {
         . ' WHERE svd_id = 0 AND vendor_id =' . $vid
         . ' ORDER BY name';
     $stmt = $pdo->prepare($sql);
-    
+
     $stmt->execute();
     $res = $stmt->fetchAll();
-    
+
     $size = count($res);
     echo("another device that has the same peripherals/Registers if any:<select name=\"svd_ref\" size=\"1\">\n");
     echo("    <option>no device</option>\n");
@@ -51,26 +51,30 @@ function getSvdIdForName($pdo, $device_name) {
     $stmt = $pdo->prepare('SELECT id FROM microcontroller WHERE name = ?');
     $stmt->execute(array($device_name));
     $row = $stmt->fetch();
-    return $row[0];
+    if(isset($row[0])) {
+        return $row[0];
+    } else {
+        return 0;
+    }
 }
 
 function inputArchitecture($pdo) {
-    $sql = 'SELECT name, revision, endian'
+    $sql = 'SELECT id, name, revision, endian'
         . ' FROM p_architecture'
         . ' WHERE alternative = 0'
         . ' ORDER BY name';
     $stmt = $pdo->prepare($sql);
-    
+
     $stmt->execute();
     $res = $stmt->fetchAll();
-    
+
     $size = count($res);
     echo("architecture:<select name=\"architecture\" size=\"1\">\n");
-    
+
     for ($i = 0; $i < $size; $i++) {
         $row = $res[$i];
         if(NULL != $row['name']) {
-            echo("    <option>" . $row['name']);
+            echo("    <option value=\"" .  $row['id'] . "\">" . $row['name']);
             if(NULL != $row['revision']) {
                 echo("/" . $row['revision']);
             }
@@ -83,38 +87,18 @@ function inputArchitecture($pdo) {
     echo("</select><br />\n");
 }
 
-function getArchitectureIdForName($pdo, $name) {
-    $pieces = explode("/", $name);
-    $size = count($pieces);
-    $sql = 'SELECT id'
-        . ' FROM p_architecture'
-        . ' WHERE name = "' . $pieces[0] . '"';
-    if($size > 1) {
-        $sql = $sql . ' AND revision = "' . $pieces[1] . '"';
-    }
-    if($size > 2) {
-        $sql = $sql . ' AND endian = "' . $pieces[2] . '"';
-    }
-    print($sql);
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $row = $stmt->fetch();
-    return $row[0];
-}
-
-
 function inputMarketState($pdo) {
     $sql = 'SELECT name'
         . ' FROM p_market_state'
         . ' ORDER BY name';
     $stmt = $pdo->prepare($sql);
-    
+
     $stmt->execute();
     $res = $stmt->fetchAll();
-    
+
     $size = count($res);
     echo("market state:<select name=\"market_state\" size=\"1\">\n");
-    
+
     for ($i = 0; $i < $size; $i++) {
         $row = $res[$i];
         if(NULL != $row['name']) {
@@ -136,13 +120,13 @@ function inputPackage($pdo) {
         . ' FROM p_package'
         . ' ORDER BY name';
     $stmt = $pdo->prepare($sql);
-    
+
     $stmt->execute();
     $res = $stmt->fetchAll();
-    
+
     $size = count($res);
     echo("package:<select name=\"package\" size=\"1\">\n");
-    
+
     for ($i = 0; $i < $size; $i++) {
         $row = $res[$i];
         if(NULL != $row['name']) {
@@ -170,7 +154,7 @@ if(isset($_POST['add']))
     {
         // logged in - > change DB
         $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        
+
         $deviceName = sanitize_string($_POST['name']);
         $CpuClockMhz = sanitize_string($_POST['CPU_clock_max_MHz']);
         $FlashSize = sanitize_string($_POST['Flash_size_kB']);
@@ -188,18 +172,17 @@ if(isset($_POST['add']))
         $VendorId = getIdForVendorName($pdo, $VendorName);
         $SvdRefName = sanitize_string($_POST['svd_ref']);
         $SvdId = getSvdIdForName($pdo, $SvdRefName);
-        $ArchitectureName = sanitize_string($_POST['architecture']);
-        $ArchitectureId = getArchitectureIdForName($pdo, $ArchitectureName);
+        $ArchitectureId = sanitize_string($_POST['architecture']);
         $MarketStateName = sanitize_string($_POST['market_state']);
         $MarketStateId = getMarketStateIdForName($pdo, $MarketStateName);
         $PackageName = sanitize_string($_POST['package']);
         $PackageId = getPackageIdForName($pdo, $PackageName);
-        
+
         // make change
         $sql = 'INSERT INTO microcontroller (name, CPU_clock_max_MHz, Flash_size_kB, RAM_size_kB, Supply_Voltage_min_V, '
             . 'Supply_Voltage_max_V, Operating_Temperature_min_degC, Operating_Temperature_max_degC, svd_id, '
             . 'Addressable_unit_bit, bus_width_bit, description, architecture_id, market_state_id, package_id, '
-            . 'vendor_id, RAM_size_byte, RAM_start_address) VALUES ("' 
+            . 'vendor_id, RAM_size_byte, RAM_start_address) VALUES ("'
             . $deviceName . '", "'
             . $CpuClockMhz . '", "'
             . $FlashSize . '", "'
@@ -221,19 +204,19 @@ if(isset($_POST['add']))
         $statement = $pdo->prepare($sql);
         $statement->execute();
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-        
+
         // echo("now requesting id");
         $sql = "SELECT LAST_INSERT_ID()";
         $statement = $pdo->prepare($sql);
         $statement->execute();
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
         $entryId = $data[0]["LAST_INSERT_ID()"];
-        
+
         // log change
         $sql = "INSERT INTO p_log (action, on_table, on_id, on_column, new_value, user)"
         . ' VALUES ("INSERT", "microcontroller", ?, ?, ?, ?)';
         $statement = $pdo->prepare($sql);
-        
+
         // name
         $statement->execute(array($entryId, "name", $deviceName, $_SESSION['name']));
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -297,7 +280,7 @@ else
     {
         // logged in - > send form
         $pdo = new PDO('mysql:dbname=microcontrollis;host=' . $db_host, $db_user, $db_password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        
+
         echo("<form method=\"POST\">\n");
         echo("name: <input name=\"name\" ><br />\n");
         echo("max CPU clock: <input name=\"CPU_clock_max_MHz\" > MHz<br />\n");
